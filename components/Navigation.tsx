@@ -11,6 +11,7 @@ import Mensajes from '../Screens/Mensajes';
 import Trabajos from '../Screens/Trabajos';
 
 import Notificaciones from 'Screens/Notificaciones';
+import ProfileButton from './ProfileButton';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,22 +29,7 @@ function MyTabs() {
         component={Trabajos}
         options={{
           headerTitle: 'Trabajos',
-          headerRight: () => (
-            <TouchableOpacity style={{
-                width: 40,
-                height: 40,
-                borderRadius: 9999,
-                overflow: 'hidden',
-                marginRight: 16,
-              }}>
-              <Image
-              className='w-full h-full'
-                source={{
-                  uri: 'https://cdn-icons-png.flaticon.com/512/3135/3135768.png',
-                }}
-              />
-            </TouchableOpacity>
-          ),
+          headerRight: () => <ProfileButton/>,
           tabBarIcon: ({ color, focused }) => {
             return <FontAwesome name="search" solid={focused} size={24} color={color} />;
           },
@@ -55,6 +41,7 @@ function MyTabs() {
         component={Contratos}
         options={{
           headerTitle: 'Contratos',
+          headerRight: () => <ProfileButton/>,
           tabBarIcon: ({ color, focused }) => {
             return <FontAwesome5 name="file-alt" solid={focused} size={24} color={color} />;
           },
@@ -66,6 +53,7 @@ function MyTabs() {
         component={Mensajes}
         options={{
           headerTitle: 'Mensajes',
+          headerRight: () => <ProfileButton/>,
           tabBarIcon: ({ color, focused }) => {
             return <FontAwesome5 name="comments" solid={focused} size={24} color={color} />;
           },
@@ -77,6 +65,7 @@ function MyTabs() {
         component={Notificaciones}
         options={{
           headerTitle: 'Notificaciones',
+          headerRight: () => <ProfileButton/>,
           tabBarIcon: ({ focused, color }) => {
             return <FontAwesome5 name="bell" solid={focused} size={24} color={color} />;
           },

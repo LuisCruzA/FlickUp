@@ -4,11 +4,11 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { TouchableOpacity, Image } from 'react-native';
 
-
-import Contratos from './Screens/Contratos';
-import Mensajes from './Screens/Mensajes';
-import Trabajos from './Screens/Trabajos';
+import Contratos from '../Screens/Contratos';
+import Mensajes from '../Screens/Mensajes';
+import Trabajos from '../Screens/Trabajos';
 
 import Notificaciones from 'Screens/Notificaciones';
 
@@ -22,17 +22,32 @@ function MyTabs() {
         tabBarActiveTintColor: '#000',
         headerShadowVisible: false,
         headerTitleAlign: 'left',
-
       }}>
       <Tab.Screen
         name="Trabajos"
         component={Trabajos}
         options={{
-            headerTitle: 'Trabajos',
+          headerTitle: 'Trabajos',
+          headerRight: () => (
+            <TouchableOpacity style={{
+                width: 40,
+                height: 40,
+                borderRadius: 9999,
+                overflow: 'hidden',
+                marginRight: 16,
+              }}>
+              <Image
+              className='w-full h-full'
+                source={{
+                  uri: 'https://cdn-icons-png.flaticon.com/512/3135/3135768.png',
+                }}
+              />
+            </TouchableOpacity>
+          ),
           tabBarIcon: ({ color, focused }) => {
             return <FontAwesome name="search" solid={focused} size={24} color={color} />;
           },
-       //   headerShown: false,
+          //   headerShown: false,
         }}
       />
       <Tab.Screen
@@ -57,7 +72,7 @@ function MyTabs() {
           //headerShown: false,
         }}
       />
-         <Tab.Screen
+      <Tab.Screen
         name="Notificaciones"
         component={Notificaciones}
         options={{

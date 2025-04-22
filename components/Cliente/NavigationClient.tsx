@@ -9,7 +9,7 @@ import { TouchableOpacity, Image } from 'react-native';
 import ContratosC from '../../Screens/Cliente/ContratosC';
 import Profesionales from '../../Screens/Cliente/Profesionales';
 import Mensajes from '../../Screens/Mensajes';
-
+import MisTrabajos from 'Screens/Cliente/MisTrabajos';
 
 import ProfileButton from '../Professional/ProfileButton';
 
@@ -18,12 +18,24 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Profesionales"
+      initialRouteName="MisTrabajos"
       screenOptions={{
         tabBarActiveTintColor: '#000',
         headerShadowVisible: false,
         headerTitleAlign: 'left',
       }}>
+        <Tab.Screen
+        name="MisTrabajos"
+        component={MisTrabajos}
+        options={{
+          headerTitle: 'Mis Trabajos',
+         headerRight: () => <ProfileButton/>,
+          tabBarIcon: ({ color, focused }) => {
+            return <FontAwesome name="briefcase" solid={focused} size={24} color={color} />;
+          },
+          //   headerShown: false,
+        }}
+      />
       <Tab.Screen
         name="Profesionales"
         component={Profesionales}
@@ -31,7 +43,7 @@ function MyTabs() {
           headerTitle: 'Profesionales',
          headerRight: () => <ProfileButton/>,
           tabBarIcon: ({ color, focused }) => {
-            return <FontAwesome name="search" solid={focused} size={24} color={color} />;
+            return <FontAwesome name="group" solid={focused} size={24} color={color} />;
           },
           //   headerShown: false,
         }}

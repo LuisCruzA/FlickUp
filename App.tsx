@@ -1,6 +1,6 @@
 
-import NavigationProfessional from './components/Professional/NavigationProfessional';
 import NavigationClient from './components/Cliente/NavigationClient';
+import NavigationProfessional from './components/Professional/NavigationProfessional';
 
 import './global.css';
 

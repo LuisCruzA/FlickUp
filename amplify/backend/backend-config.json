@@ -25,6 +25,22 @@
           ],
           "category": "function",
           "resourceName": "contractsFn"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "jobsFn"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "proposalsFn"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -69,6 +85,48 @@
       "service": "LambdaLayer"
     },
     "freelancersFn": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickuppgLayer"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickupHelperLayer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "jobsFn": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickuppgLayer"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickupHelperLayer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "proposalsFn": {
       "build": true,
       "dependsOn": [
         {
@@ -221,6 +279,86 @@
         {
           "category": "function",
           "resourceName": "freelancersFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_jobsFn_dbName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "jobsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_jobsFn_dbSecretArn": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "jobsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_jobsFn_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "jobsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_jobsFn_proxyEndpoint": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "jobsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_jobsFn_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "jobsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_proposalsFn_dbName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "proposalsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_proposalsFn_dbSecretArn": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "proposalsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_proposalsFn_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "proposalsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_proposalsFn_proxyEndpoint": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "proposalsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_proposalsFn_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "proposalsFn"
         }
       ]
     },

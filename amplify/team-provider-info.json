@@ -19,7 +19,7 @@
         },
         "usersFn": {
           "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
-          "s3Key": "amplify-builds/usersFn-7576436f346c38657375-build.zip",
+          "s3Key": "amplify-builds/usersFn-70444c6e364d504e685a-build.zip",
           "proxyEndpoint": "flickup-proxy.proxy-cytmeaaa2wzz.us-east-1.rds.amazonaws.com",
           "dbName": "flickup",
           "dbSecretArn": "arn:aws:secretsmanager:us-east-1:954976296009:secret:rds!cluster-b2474fb7-27d7-4186-8885-7b15a0406aa3-8DQZTC"
@@ -42,6 +42,20 @@
           "dbName": "flickup",
           "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
           "s3Key": "amplify-builds/contractsFn-6c504674575779417959-build.zip"
+        },
+        "jobsFn": {
+          "proxyEndpoint": "flickup-proxy.proxy-cytmeaaa2wzz.us-east-1.rds.amazonaws.com",
+          "dbSecretArn": "arn:aws:secretsmanager:us-east-1:954976296009:secret:rds!cluster-b2474fb7-27d7-4186-8885-7b15a0406aa3-8DQZTC",
+          "dbName": "flickup",
+          "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+          "s3Key": "amplify-builds/jobsFn-4c6e5161665237563271-build.zip"
+        },
+        "proposalsFn": {
+          "proxyEndpoint": "flickup-proxy.proxy-cytmeaaa2wzz.us-east-1.rds.amazonaws.com",
+          "dbSecretArn": "arn:aws:secretsmanager:us-east-1:954976296009:secret:rds!cluster-b2474fb7-27d7-4186-8885-7b15a0406aa3-8DQZTC",
+          "dbName": "flickup",
+          "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+          "s3Key": "amplify-builds/proposalsFn-6f4f2b57327a774f7577-build.zip"
         }
       },
       "api": {

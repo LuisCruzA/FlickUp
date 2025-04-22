@@ -1,0 +1,52 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-flickup-dev-3b549-authRole",
+      "UnauthRoleArn": "arn:aws:iam::954976296009:role/amplify-flickup-dev-3b549-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::954976296009:role/amplify-flickup-dev-3b549-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+      "UnauthRoleName": "amplify-flickup-dev-3b549-unauthRole",
+      "StackName": "amplify-flickup-dev-3b549",
+      "StackId": "arn:aws:cloudformation:us-east-1:954976296009:stack/amplify-flickup-dev-3b549/ea9cb3b0-1efe-11f0-bb30-1256a05862b9",
+      "AmplifyAppId": "dx8zp1qhtl2u8"
+    },
+    "categories": {
+      "function": {
+        "flickuppgLayer": {
+          "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+          "s3Key": "amplify-builds/flickuppgLayer-LambdaLayerVersiond5050be5-build.zip"
+        },
+        "usersFn": {
+          "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+          "s3Key": "amplify-builds/usersFn-7576436f346c38657375-build.zip",
+          "proxyEndpoint": "flickup-proxy.proxy-cytmeaaa2wzz.us-east-1.rds.amazonaws.com",
+          "dbName": "flickup",
+          "dbSecretArn": "arn:aws:secretsmanager:us-east-1:954976296009:secret:rds!cluster-b2474fb7-27d7-4186-8885-7b15a0406aa3-8DQZTC"
+        },
+        "freelancersFn": {
+          "proxyEndpoint": "flickup-proxy.proxy-cytmeaaa2wzz.us-east-1.rds.amazonaws.com",
+          "dbSecretArn": "arn:aws:secretsmanager:us-east-1:954976296009:secret:rds!cluster-b2474fb7-27d7-4186-8885-7b15a0406aa3-8DQZTC",
+          "dbName": "flickup",
+          "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+          "s3Key": "amplify-builds/freelancersFn-4d57446c6e5651464443-build.zip"
+        },
+        "flickupHelperLayer": {
+          "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+          "s3Key": "amplify-builds/flickupHelperLayer-LambdaLayerVersionddeb7a7c-build.zip"
+        },
+        "flickupflickupHelperLayer": {},
+        "contractsFn": {
+          "proxyEndpoint": "flickup-proxy.proxy-cytmeaaa2wzz.us-east-1.rds.amazonaws.com",
+          "dbSecretArn": "arn:aws:secretsmanager:us-east-1:954976296009:secret:rds!cluster-b2474fb7-27d7-4186-8885-7b15a0406aa3-8DQZTC",
+          "dbName": "flickup",
+          "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+          "s3Key": "amplify-builds/contractsFn-6c504674575779417959-build.zip"
+        }
+      },
+      "api": {
+        "flickupApi": {}
+      }
+    }
+  }
+}

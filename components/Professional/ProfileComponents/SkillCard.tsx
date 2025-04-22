@@ -4,8 +4,8 @@ import { View, Text } from 'react-native';
 const SkillCard = ({name}: {name: string}) => {
   return (
     <View className="flex-row flex-wrap gap-2">
-      <View className="rounded-full bg-gray-200 px-3 py-1">
-        <Text className="text-sm">{name}</Text>
+      <View className="rounded-full   bg-blue-600 px-4 py-2">
+        <Text className="text-sm font-bold  text-white">{name}</Text>
       </View>
     </View>
   );

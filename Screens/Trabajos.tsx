@@ -83,7 +83,7 @@ export default function Trabajos(){
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity
-            className={` mb-4 mt-4 rounded-2xl mx-1 bg-blue-600 px-4 py-2 ${filtro === item ? 'opacity-100' : 'opacity-60'}`}
+            className={` mb-1 mt-1 rounded-2xl mx-1 h-10 bg-blue-600 px-4 py-2 ${filtro === item ? 'opacity-100' : 'opacity-60'}`}
             onPress={() => setFiltro(item)}>
             <Text className="font-bold text-white text-sm">{item}</Text>
           </TouchableOpacity>

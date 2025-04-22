@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import PerfilModal from './PerfilModal';
+import PerfilModal from './Professional/PerfilModal';
 
 export default function ProfileButton() {
   const [profileVisible, setProfileVisible] = useState(false);

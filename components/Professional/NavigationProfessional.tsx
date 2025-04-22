@@ -6,11 +6,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { TouchableOpacity, Image } from 'react-native';
 
-import Contratos from '../Screens/Contratos';
-import Mensajes from '../Screens/Mensajes';
-import Trabajos from '../Screens/Trabajos';
+import Contratos from '../../Screens/Professional/Contratos';
+import Mensajes from '../../Screens/Mensajes';
+import Trabajos from '../../Screens/Professional/Trabajos';
 
-import Notificaciones from 'Screens/Notificaciones';
+import Finanzas from 'Screens/Professional/Finanzas';
 import ProfileButton from './ProfileButton';
 
 const Tab = createBottomTabNavigator();
@@ -61,10 +61,10 @@ function MyTabs() {
         }}
       />
       <Tab.Screen
-        name="Notificaciones"
-        component={Notificaciones}
+        name="Finanzas"
+        component={Finanzas}
         options={{
-          headerTitle: 'Notificaciones',
+          headerTitle: 'Finanzas',
           headerRight: () => <ProfileButton/>,
           tabBarIcon: ({ focused, color }) => {
             return <FontAwesome5 name="bell" solid={focused} size={24} color={color} />;
@@ -76,7 +76,7 @@ function MyTabs() {
   );
 }
 
-export default function Navigation() {
+export default function NavigationProfessional() {
   return (
     <NavigationContainer>
       <MyTabs />

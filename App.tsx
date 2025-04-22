@@ -1,12 +1,12 @@
 
-import Navigation from './components/Navigation';
+import NavigationProfessional from './components/Professional/NavigationProfessional';
 
 import './global.css';
 
 export default function App() {
   return (
    
-  <Navigation />
+  <NavigationProfessional />
   
   );
 }

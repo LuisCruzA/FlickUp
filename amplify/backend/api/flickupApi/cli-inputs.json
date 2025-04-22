@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "paths": {
+    "/users": {
+      "name": "/users",
+      "lambdaFunction": "usersFn",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/freelancers": {
+      "name": "/freelancers",
+      "lambdaFunction": "freelancersFn",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/contracts": {
+      "name": "/contracts",
+      "lambdaFunction": "contractsFn",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

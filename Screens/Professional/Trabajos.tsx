@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-import Flashcard from '../components/Cards';
+import Flashcard from '../../components/Professional/Cards';
 
 interface Trabajo {
   id: string;

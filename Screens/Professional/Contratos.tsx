@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput } from 'react-native';
-import { MagnifyingGlassIcon } from 'react-native-heroicons/outline';
 
-import Flashcard from '../components/ContractCards';
+import Flashcard from '../../components/Professional/ContractCards';
 
 interface Contrato {
   id: string;

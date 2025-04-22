@@ -1,25 +1,13 @@
-
 import NavigationClient from './components/Cliente/NavigationClient';
 import NavigationProfessional from './components/Professional/NavigationProfessional';
-
+import { useState } from 'react';
+import LoginScreen from 'Screens/LoginScreen';
 import './global.css';
 
 export default function App() {
-  
-  let cliente: boolean=false;
+  const [usuario, setUsuario] = useState<null | { rol: string }>(null);
 
-  
-  
-  return (
-  <>
-  
-    {cliente ? <NavigationClient/> : <NavigationProfessional/>}
-    
-  </> 
+  if (!usuario) return <LoginScreen onLogin={setUsuario} />;
 
-  
-  
-  );
+  return usuario.rol === 'cliente' ? <NavigationClient /> : <NavigationProfessional />;
 }
-//<ScreenContent title="Home" path="App.tsx" />
-//    <StatusBar style="auto" />

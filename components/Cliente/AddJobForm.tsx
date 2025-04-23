@@ -10,6 +10,33 @@ import {
   Platform,
   KeyboardTypeOptions,
 } from 'react-native';
+import { post } from '@aws-amplify/api-rest';
+import { getCurrentUser } from 'aws-amplify/auth';
+
+async function postProject(projectData: any) {
+  try {
+    const { userId } = await getCurrentUser();
+    
+    const restOperation = post({
+      apiName: 'flickupApi',
+      path: '/projects',
+      options: {
+        body: {
+          ...projectData,
+          client_id: userId,
+          status: 'Activo',
+          is_featured: false,
+          expires_at: null
+        }
+      }
+    });
+
+    const response = await restOperation.response;
+    return response.body.json();
+  } catch (error: any) {
+    throw new Error(error.message || 'Error al crear el proyecto');
+  }
+}
 
 const AddJobForm = ({
   visible,
@@ -45,41 +72,33 @@ const AddJobForm = ({
     onClose();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
-      // Validación de campos requeridos
       const camposObligatorios = [
-        'title',
-        'description',
-        'budget',
-        'category',
-        'required_skills',
-        'estimated_duration',
-        'complexity_level',
+        'title', 'description', 'budget', 'category', 
+        'required_skills', 'estimated_duration'
       ];
   
       for (const campo of camposObligatorios) {
-        if (!form[campo] || form[campo].trim() === '') {
-          throw new Error(`El campo "${campo}" no puede estar vacío.`);
-        }
+        if (!form[campo]?.trim()) throw new Error(`Campo "${campo}" requerido`);
       }
   
-      // Construcción del objeto final
       const jobData = {
         ...form,
-        budget: parseFloat(form.budget),
-        estimated_duration: parseInt(form.estimated_duration),
-        required_skills: form.required_skills.split(',').map((s) => s.trim()),
+        budget: Number(form.budget),
+        estimated_duration: Number(form.estimated_duration),
+        required_skills: form.required_skills.split(',').map(s => s.trim()),
         status: 'Activo',
-        is_featured: false,
-        posted_date: new Date().toISOString(),
-        expires_at: null,
+        posted_date: new Date().toISOString()
       };
+  
+      await postProject(jobData);
       closeModal();
+      
     } catch (error: any) {
-      alert(error.message); 
+      alert(error.message);
+    }
   };
-  }
 
   return (
     <Modal visible={visible} animationType="slide">
@@ -114,7 +133,6 @@ const AddJobForm = ({
               key: 'estimated_duration',
               keyboardType: 'numeric',
             },
-            { label: 'Nivel de complejidad', key: 'complexity_level' },
           ].map(({ label, key, multiline, style, keyboardType }) => (
             <View key={key} className="mb-4">
               <Text className="text-sm font-medium mb-1">{label}</Text>

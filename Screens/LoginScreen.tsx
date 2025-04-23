@@ -7,52 +7,78 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { signIn, signOut } from 'aws-amplify/auth';
+import { signIn, signOut, fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
+import { get } from 'aws-amplify/api';
+
+
+type Rol = 'cliente' | 'profesional';
 
 type Props = {
-  onLogin: (u: { rol: 'cliente' | 'profesional' }) => void;
+  onLogin: (u: { rol: Rol }) => void;
   onRegisterRequest: () => void;
 };
 
-const LoginScreen = ({ onLogin, onRegisterRequest }: Props) => {
+export default function LoginScreen({ onLogin, onRegisterRequest }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  /** Inicia sesión forzando la limpieza de cualquier token previo */
   const handleLogin = async () => {
     if (loading) return;
     setLoading(true);
-
+  
     try {
-      // 1 — Elimina refresh-tokens locales y remotos
       await signOut({ global: true }).catch(() => {});
-
-      // 2 — Ahora sí valida la contraseña con Cognito
       const res = await signIn({ username: email.trim(), password });
-      console.log('nextStep:', res.nextStep);
-
+      
       if (res.nextStep?.signInStep && res.nextStep.signInStep !== 'DONE') {
         alert('Completa el flujo de autenticación pendiente');
-        setLoading(false);
         return;
       }
-
-      // ▸ Cambia esta lógica por la que uses realmente para el rol
-      const rol: 'cliente' | 'profesional' =
-        email.trim().toLowerCase().startsWith('l') ? 'cliente' : 'profesional';
-
-      onLogin({ rol });
+      const { userId } = await getCurrentUser();
+      
+      const { tokens } = await fetchAuthSession({ forceRefresh: true });
+      const accessToken = tokens?.accessToken?.toString();
+      
+      if (!accessToken) throw new Error('Token no disponible');
+  
+      const restOp = get({
+        apiName: 'flickupApi',
+        path: `/me/role?userId=${encodeURIComponent(userId)}`,
+        options: {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      });
+      
+      const { body } = await restOp.response;
+      const rolJson = await body.json() as unknown;
+      console.log(body)
+      console.log(rolJson)
+      
+      if (rolJson !== 'cliente' && rolJson !== 'profesional') {
+        throw new Error('Rol inesperado en la respuesta');
+      }
+      
+      onLogin({ rol: rolJson });
     } catch (err: any) {
-      if (err.name === 'NotAuthorizedException')
-        alert('Contraseña incorrecta');
-      else if (err.name === 'UserNotFoundException')
-        alert('El usuario no existe');
-      else alert(`Error al iniciar sesión: ${err.message}`);
+      if (err.name === 'NotAuthorizedException') alert('Contraseña incorrecta');
+      else if (err.name === 'UserNotFoundException') alert('El usuario no existe');
+      else alert('Error: ' + (err.message ?? 'Desconocido'));
     } finally {
       setLoading(false);
     }
   };
+
+  async function currentAuthenticatedUser() {
+    try {
+      const { username, userId, signInDetails } = await getCurrentUser();
+      console.log(`The username: ${username}`);
+      console.log(`The userId: ${userId}`);
+      console.log(`The signInDetails: ${signInDetails}`);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
@@ -109,6 +135,4 @@ const LoginScreen = ({ onLogin, onRegisterRequest }: Props) => {
       </TouchableOpacity>
     </SafeAreaView>
   );
-};
-
-export default LoginScreen;
+}

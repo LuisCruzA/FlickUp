@@ -1,24 +1,26 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from 'react'
+import { View, Text, TextInput, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { signIn } from 'aws-amplify/auth'
 
-const usuariosPrueba = [
-  { id: '1', email: 'C', password: '1234', rol: 'cliente' },
-  { id: '2', email: 'P', password: '1234', rol: 'profesional' },
-];
+type Props = {
+  onLogin: (u: { rol: 'cliente' | 'profesional' }) => void
+  onRegisterRequest: () => void
+}
 
-const LoginScreen = ({ onLogin }: { onLogin: (u: any) => void }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginScreen = ({ onLogin, onRegisterRequest }: Props) => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-  const handleLogin = () => {
-    const user = usuariosPrueba.find((u) => u.email === email && u.password === password);
-    if (user) {
-      onLogin(user);
-    } else {
-      alert('Usuario o contraseña incorrecta');
+  const handleLogin = async () => {
+    try {
+      await signIn({ username: email, password })
+      const rol: 'cliente' | 'profesional' = email.startsWith('C') ? 'cliente' : 'profesional'
+      onLogin({ rol })
+    } catch {
+      alert('Usuario o contraseña incorrecta')
     }
-  };
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
@@ -49,13 +51,15 @@ const LoginScreen = ({ onLogin }: { onLogin: (u: any) => void }) => {
         <Text className="text-center text-sm text-blue-500">¿Olvidaste tu contraseña?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={handleLogin}
-        className="mt-4 items-center rounded-md bg-blue-500 py-3">
+      <TouchableOpacity onPress={handleLogin} className="mt-4 items-center rounded-md bg-blue-500 py-3">
         <Text className="text-lg font-bold text-white">Iniciar sesión</Text>
       </TouchableOpacity>
-    </SafeAreaView>
-  );
-};
 
-export default LoginScreen;
+      <TouchableOpacity onPress={onRegisterRequest} className="mt-4">
+        <Text className="text-center text-sm text-blue-500">Crear una cuenta</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  )
+}
+
+export default LoginScreen

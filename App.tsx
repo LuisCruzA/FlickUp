@@ -1,16 +1,37 @@
-import { useState } from 'react';
-import { Amplify } from 'aws-amplify';
-import awsconfig from './src/aws-exports';
-import NavigationClient from './components/Cliente/NavigationClient';
-import NavigationProfessional from './components/Professional/NavigationProfessional';
-import LoginScreen from 'Screens/LoginScreen';
-import './global.css';
+import { useState } from 'react'
+import NavigationClient from './components/Cliente/NavigationClient'
+import NavigationProfessional from './components/Professional/NavigationProfessional'
+import LoginScreen from 'Screens/LoginScreen'
+import RegisterScreen from 'Screens/RegisterScreen'
+import './global.css'
 
-Amplify.configure(awsconfig);
+import { Amplify } from 'aws-amplify'
+import amplifyconfig from './src/amplifyconfiguration.json'
+Amplify.configure(amplifyconfig)
+
+type Usuario = { rol: 'cliente' | 'profesional' }
 
 export default function App() {
-  const [usuario, setUsuario] = useState<null | { rol: string }>(null);
+  const [usuario, setUsuario] = useState<Usuario | null>(null)
+  const [screen, setScreen] = useState<'login' | 'register'>('login')
 
-  if (!usuario) return <LoginScreen onLogin={setUsuario} />;
-  return usuario.rol === 'cliente' ? <NavigationClient /> : <NavigationProfessional />;
+  if (!usuario) {
+    if (screen === 'login')
+      return (
+        <LoginScreen
+          onLogin={setUsuario}
+          onRegisterRequest={() => setScreen('register')}
+        />
+      )
+    return (
+      <RegisterScreen
+        onSuccess={(u) => {
+          setUsuario(u)
+        }}
+        onBack={() => setScreen('login')}
+      />
+    )
+  }
+
+  return usuario.rol === 'cliente' ? <NavigationClient /> : <NavigationProfessional />
 }

@@ -1,7 +1,12 @@
-const { getDefaultConfig } = require('expo/metro-config');
-const { withNativeWind } = require('nativewind/metro');
+// metro.config.js (en la raíz)
+const { getDefaultConfig } = require('@react-native/metro-config');
+const { withNativeWind }    = require('nativewind/metro');
 
-// eslint-disable-next-line no-undef
 const config = getDefaultConfig(__dirname);
 
-module.exports = withNativeWind(config, { input: './global.css' });
+// Incluimos .css en los assets
+config.resolver.assetExts = [...config.resolver.assetExts, 'css'];
+
+module.exports = withNativeWind(config, {
+  input: './global.css',
+});

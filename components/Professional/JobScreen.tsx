@@ -1,9 +1,9 @@
-// JobInfoScreen.tsx
+import { AntDesign } from '@expo/vector-icons';
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AntDesign } from '@expo/vector-icons';
 import SkillCard from './ProfileComponents/SkillCard';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 interface Trabajo {
   id: string;
@@ -26,6 +26,11 @@ interface JobInfoProps {
 
 const JobInfoScreen: React.FC<JobInfoProps> = ({ trabajo, onClose }) => {
   const habilidades = trabajo.habilidadesRequeridas;
+  const navigation = useNavigation<NavigationProp<any>>();
+  const aplicarAhora = () => {
+    navigation.navigate('Mensajes');
+  };
+  
   return (
     <View className="absolute inset-0 z-50 bg-white">
       <SafeAreaView className="flex-1">
@@ -83,7 +88,9 @@ const JobInfoScreen: React.FC<JobInfoProps> = ({ trabajo, onClose }) => {
 
           {/* CTA - Call To Action */}
           <View className="mt-6 flex-row justify-between space-x-4">
-            <TouchableOpacity className="flex-1 rounded-md bg-blue-500 py-3">
+            <TouchableOpacity 
+              onPress={aplicarAhora}
+              className="flex-1 rounded-xl bg-blue-500 py-3">
               <Text className="text-center text-base font-bold text-white">Aplicar ahora</Text>
             </TouchableOpacity>
           </View>

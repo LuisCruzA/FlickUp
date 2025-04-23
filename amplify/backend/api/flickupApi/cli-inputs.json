@@ -21,6 +21,20 @@
       "permissions": {
         "setting": "open"
       }
+    },
+    "/projects": {
+      "name": "/projects",
+      "lambdaFunction": "jobsFn",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/proposals": {
+      "name": "/proposals",
+      "lambdaFunction": "proposalsFn",
+      "permissions": {
+        "setting": "open"
+      }
     }
   }
 }

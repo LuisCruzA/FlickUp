@@ -8,7 +8,7 @@ import { TouchableOpacity, Image } from 'react-native';
 
 import ContratosC from '../../Screens/Cliente/ContratosC';
 import Profesionales from '../../Screens/Cliente/Profesionales';
-import Mensajes from '../../Screens/Mensajes';
+import MensajesClient from '../../Screens/Cliente/MensajesClient';
 import MisTrabajos from 'Screens/Cliente/MisTrabajos';
 
 import ProfileButton from '../Professional/ProfileButton';
@@ -62,7 +62,7 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Mensajes"
-        component={Mensajes}
+        component={MensajesClient}
         options={{
           headerTitle: 'Mensajes',
           headerRight: () => <ProfileButton/>,

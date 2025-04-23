@@ -7,7 +7,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { TouchableOpacity, Image } from 'react-native';
 
 import Contratos from '../../Screens/Professional/Contratos';
-import MensajesProfessional from '../../Screens/MensajesProfessional';
+import MensajesPro from '../../Screens/Professional/MensajesPro';
 import Trabajos from '../../Screens/Professional/Trabajos';
 
 import Finanzas from 'Screens/Professional/Finanzas';
@@ -49,8 +49,8 @@ function MyTabs() {
         }}
       />
       <Tab.Screen
-        name="MensajesProfessional"
-        component={MensajesProfessional}
+        name="Mensajes"
+        component={MensajesPro}
         options={{
           headerTitle: 'Mensajes',
           headerRight: () => <ProfileButton/>,

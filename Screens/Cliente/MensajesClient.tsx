@@ -1,28 +1,27 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { View, TextInput, Text, FlatList } from 'react-native';
+import { View, TextInput, FlatList } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import ChatCard from 'components/ChatCard';
-import Chat from 'components/Chat';
+import ChatClient from 'components/Cliente/ChatClient';
 import { useNavigation } from '@react-navigation/native';
 
-export default function Mensajes() {
+export default function MensajesClient() {
   const [chatActivo, setChatActivo] = useState<string | null>(null);
   const userId = '123';
 
   const navigation = useNavigation();
 
-useLayoutEffect(() => {
-  if (chatActivo) {
-    navigation.setOptions({ headerShown: false });
-  } else {
-    navigation.setOptions({ headerShown: true });
-  }
-}, [chatActivo]);
-
+  useLayoutEffect(() => {
+    if (chatActivo) {
+      navigation.setOptions({ headerShown: false });
+    } else {
+      navigation.setOptions({ headerShown: true });
+    }
+  }, [chatActivo]);
 
   const handleBack = () => {
     setChatActivo(null);
-  };  
+  };
 
   const chats = [
     {
@@ -31,6 +30,7 @@ useLayoutEffect(() => {
       message: 'Tú: Hola soy tu fan',
       time: '9:40 p.m.',
       avatar: 'https://i.pravatar.cc/150?img=1',
+      project_title: 'Diseño de logotipo para startup',
     },
     {
       id: '2',
@@ -38,6 +38,7 @@ useLayoutEffect(() => {
       message: 'Tu puta madre',
       time: '5:40 a.m.',
       avatar: 'https://i.pravatar.cc/150?img=2',
+      project_title: 'Landing page con animaciones',
     },
     {
       id: '3',
@@ -45,6 +46,7 @@ useLayoutEffect(() => {
       message: '👍 Me gustó tu mensaje',
       time: 'Ayer',
       avatar: 'https://i.pravatar.cc/150?img=3',
+      project_title: 'Campaña de marketing de verano',
     },
     {
       id: '4',
@@ -52,6 +54,7 @@ useLayoutEffect(() => {
       message: 'Tú: Te amo, perdón por todo :C',
       time: 'Ayer',
       avatar: 'https://i.pravatar.cc/150?img=4',
+      project_title: 'Diseño de ilustraciones personalizadas',
     },
     {
       id: '5',
@@ -59,6 +62,7 @@ useLayoutEffect(() => {
       message: 'Hey! Whats up?',
       time: 'Lunes',
       avatar: 'https://i.pravatar.cc/150?img=5',
+      project_title: 'Optimización SEO para eCommerce',
     },
     {
       id: '6',
@@ -66,15 +70,12 @@ useLayoutEffect(() => {
       message: '¿Cuánto me cobras por cambiar el motor?',
       time: 'Domingo',
       avatar: 'https://i.pravatar.cc/150?img=6',
+      project_title: 'Mantenimiento de backend con Node.js',
     },
   ];
 
   if (chatActivo) {
-    return <Chat 
-            chatId={chatActivo}
-            userId={userId}
-            onBack={()=>handleBack()}
-            />;
+    return <ChatClient chatId={chatActivo} userId={userId} onBack={() => handleBack()} />;
   }
 
   return (
@@ -99,6 +100,7 @@ useLayoutEffect(() => {
             message={item.message}
             time={item.time}
             avatar={item.avatar}
+            project_title={item.project_title}
             onPress={() => setChatActivo(item.id)}
           />
         )}

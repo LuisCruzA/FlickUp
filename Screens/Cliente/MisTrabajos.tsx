@@ -1,20 +1,11 @@
-import React, { useState, useLayoutEffect } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-import JobCard from 'components/Professional/JobCard';
-import JobInfoScreen from 'components/Professional/JobScreen';
-import { Ionicons } from '@expo/vector-icons';
 import AddJobForm from 'components/Cliente/AddJobForm';
+import JobInfoClient from 'components/Cliente/JobInfoClient';
+import JobCard from 'components/Professional/JobCard';
+import React, { useState, useLayoutEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, TextInput } from 'react-native';
 interface Trabajo {
   id: string;
   titulo: string;
@@ -29,10 +20,12 @@ interface Trabajo {
   destacado: boolean;
 }
 export default function MisTrabajos() {
+  const [busqueda, setBusqueda] = useState('');
   const [filtro, setFiltro] = useState('Todos');
   const [trabajoActivo, setTrabajoActivo] = useState<Trabajo | null>(null);
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
+
   useLayoutEffect(() => {
     if (trabajoActivo) {
       navigation.setOptions({ headerShown: false });
@@ -72,7 +65,7 @@ export default function MisTrabajos() {
     },
     {
       id: '3',
-      titulo: 'Optimización SEO para sitio web',
+      titulo: 'Pene',
       publicadoHace: 'hace 1 día',
       precio: '$800 MXN',
       tiempoDisponible: '4 días',
@@ -102,9 +95,11 @@ export default function MisTrabajos() {
 
   const filtros = ['Todos', 'Diseño', 'Programación', 'Marketing'];
 
-  const trabajosFiltrados =
-    filtro === 'Todos' ? trabajos : trabajos.filter((trabajo) => trabajo.categoria === filtro);
-
+  const trabajosFiltrados = trabajos.filter((trabajo) => {
+    const coincideCategoria = filtro === 'Todos' || trabajo.categoria === filtro;
+    const coincideBusqueda = trabajo.titulo.toLowerCase().includes(busqueda.toLowerCase());
+    return coincideCategoria && coincideBusqueda;
+  });  
   return (
     <View className="flex-1 bg-white">
       {/* Búsqueda */}
@@ -112,7 +107,9 @@ export default function MisTrabajos() {
         <TextInput
           placeholder="Buscar trabajo..."
           placeholderTextColor="#9CA3AF"
-          className="flex-1 text-base text-gray-800"
+          value={busqueda}
+          onChangeText={(text) => setBusqueda(text)}
+          className="flex-1 text-base text-gray-800 "
         />
         <FontAwesome name="search" size={20} color="#9CA3AF" />
       </View>
@@ -156,16 +153,13 @@ export default function MisTrabajos() {
         />
       </View>
       <TouchableOpacity
-  onPress={() => setModalVisible(true)}
-  className="absolute bottom-6 right-6 z-50 rounded-full bg-blue-600 p-4 shadow-lg"
->
-  <Ionicons name="add" size={28} color="white" />
-</TouchableOpacity>
-<AddJobForm 
-visible={modalVisible}
-onClose={() => setModalVisible(false)}/>
+        onPress={() => setModalVisible(true)}
+        className="absolute bottom-6 right-6 z-50 rounded-full bg-blue-600 p-4 shadow-lg">
+        <Ionicons name="add" size={28} color="white" />
+      </TouchableOpacity>
+      <AddJobForm visible={modalVisible} onClose={() => setModalVisible(false)} />
       {trabajoActivo && (
-        <JobInfoScreen trabajo={trabajoActivo} onClose={() => setTrabajoActivo(null)} />
+        <JobInfoClient trabajo={trabajoActivo} onClose={() => setTrabajoActivo(null)} />
       )}
     </View>
   );

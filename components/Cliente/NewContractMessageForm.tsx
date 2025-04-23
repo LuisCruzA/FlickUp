@@ -72,14 +72,14 @@ const NewContractMessageForm = ({
         className="flex-1 bg-white"
       >
         <ScrollView className="p-6 pt-20">
-          <Text className="text-2xl font-bold mb-4">Aplicar a trabajo</Text>
+          <Text className="text-2xl font-bold mb-4">Propuesta</Text>
 
           {/* Campos de formulario actualizados */}
           {[
             { label: 'Título del proyecto', key: 'titulo' },
             { label: 'Monto propuesto (MXN)', key: 'proposed_amount', keyboardType: 'numeric' },
             {
-              label: 'Carta de presentación',
+              label: 'Descripción',
               key: 'cover_letter',
               multiline: true,
               style: 'h-32 text-top',

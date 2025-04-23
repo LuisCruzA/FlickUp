@@ -5,13 +5,10 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
 import Flashcard from '../../components/Cliente/professionalCards';
+import NewContractMessageForm from 'components/Cliente/NewContractMessageForm';
 
 interface Profesional {
   id: string;
@@ -22,60 +19,75 @@ interface Profesional {
   location: string;
   rating: string;
   categoria: string;
+  image: string; // <-- agrega la URL de la foto
 }
+
 export default function Profesionales() {
   const [filtro, setFiltro] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProfessional, setSelectedProfessional] = useState<Profesional | null>(null);
+
   const profesionales: Profesional[] = [
     {
       id: '1',
-      nombre: 'luis',
-      descripcion: 'hoola sot tal.... soy especialista en tal... cuento con talm cosaa...',
+      nombre: 'Luis',
+      descripcion: 'Soy especialista en diseño gráfico...',
       hourly_rate: '$1000 MXN',
       availability_status: 'Disponible',
-      location: 'xoxoyork',
+      location: 'CDMX',
       rating: '5.0',
-      categoria: 'diseño',
+      categoria: 'Diseño',
+      image: 'https://randomuser.me/api/portraits/men/32.jpg',
     },
     {
       id: '2',
-      nombre: 'bruno',
-      descripcion: 'habilidad de nose',
-      hourly_rate: '$1000 MXN',
+      nombre: 'María',
+      descripcion: 'Experta en marketing digital...',
+      hourly_rate: '$1200 MXN',
       availability_status: 'Disponible',
-      location: 'xoxoyork',
-      rating: '5.0',
+      location: 'CDMX',
+      rating: '4.8',
       categoria: 'Marketing',
+      image: 'https://randomuser.me/api/portraits/women/44.jpg',
     },
     {
       id: '3',
-      nombre: 'omar',
-      descripcion: 'habilidad de nose',
-      hourly_rate: '$10 MXN',
-      availability_status: 'no disponible',
-      location: 'xoxoyork',
-      rating: '1.0',
-      categoria: 'Diseño',
+      nombre: 'Omar',
+      descripcion: 'Desarrollador back-end...',
+      hourly_rate: '$800 MXN',
+      availability_status: 'No disponible',
+      location: 'GDL',
+      rating: '4.2',
+      categoria: 'Programación',
+      image: 'https://i.pravatar.cc/150?img=5',
     },
     {
       id: '4',
-      nombre: 'capiubara',
-      descripcion: 'habilidad de nose',
-      hourly_rate: '$1000 MXN',
-      availability_status: 'no disponible',
-      location: 'xoxoyork',
-      rating: '5.0',
-      categoria: 'Programación',
+      nombre: 'Sofía',
+      descripcion: 'UI/UX designer con 5 años de experiencia...',
+      hourly_rate: '$1100 MXN',
+      availability_status: 'Disponible',
+      location: 'MTY',
+      rating: '4.9',
+      categoria: 'Diseño',
+      image: 'https://i.pravatar.cc/150?img=8',
     },
   ];
-
+  
   const filtros = ['Todos', 'Diseño', 'Programación', 'Marketing'];
 
-  const profesionalesFiltrados = profesionales.filter((profesional) => {
-    const coincideCategoria = filtro === 'Todos' || profesional.categoria === filtro;
-    const coincideBusqueda = profesional.nombre.toLowerCase().includes(busqueda.toLowerCase());
+  const profesionalesFiltrados = profesionales.filter((prof) => {
+    const coincideCategoria = filtro === 'Todos' || prof.categoria === filtro;
+    const coincideBusqueda = prof.nombre.toLowerCase().includes(busqueda.toLowerCase());
     return coincideCategoria && coincideBusqueda;
   });
+
+  const handleApply = (prof: Profesional) => {
+    setSelectedProfessional(prof);
+    setModalVisible(true);
+  };
+
   return (
     <View className="flex-1 bg-white">
       {/* Búsqueda */}
@@ -84,7 +96,7 @@ export default function Profesionales() {
           placeholder="Buscar profesional..."
           placeholderTextColor="#9CA3AF"
           value={busqueda}
-          onChangeText={(text) => setBusqueda(text)}
+          onChangeText={setBusqueda}
           className="flex-1 text-base text-gray-800"
         />
         <FontAwesome name="search" size={20} color="#9CA3AF" />
@@ -109,8 +121,8 @@ export default function Profesionales() {
         />
       </View>
 
-      {/* Lista de trabajos */}
-      <View className="flex-1 ">
+      {/* Lista de profesionales */}
+      <View className="flex-1">
         <FlatList
           data={profesionalesFiltrados}
           keyExtractor={(item) => item.id}
@@ -125,10 +137,20 @@ export default function Profesionales() {
               location={item.location}
               categoria={item.categoria}
               rating={item.rating}
+              profileImage={item.image}
+              onApply={() => handleApply(item)}
             />
           )}
         />
       </View>
+
+      {/* Modal de aplicación */}
+      {selectedProfessional && (
+        <NewContractMessageForm
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
     </View>
   );
 }

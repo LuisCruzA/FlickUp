@@ -22,13 +22,11 @@ interface Profesional {
   location: string;
   rating: string;
   categoria: string;
-
-
 }
-export default function Trabajos() {
+export default function Profesionales() {
   const [filtro, setFiltro] = useState('Todos');
-
-  const trabajos: Profesional[] = [
+  const [busqueda, setBusqueda] = useState('');
+  const profesionales: Profesional[] = [
     {
       id: '1',
       nombre: 'luis',
@@ -37,8 +35,8 @@ export default function Trabajos() {
       availability_status: 'Disponible',
       location: 'xoxoyork',
       rating: '5.0',
-      categoria: 'diseño',   
-     },
+      categoria: 'diseño',
+    },
     {
       id: '2',
       nombre: 'bruno',
@@ -47,7 +45,7 @@ export default function Trabajos() {
       availability_status: 'Disponible',
       location: 'xoxoyork',
       rating: '5.0',
-      categoria: 'Marketing', 
+      categoria: 'Marketing',
     },
     {
       id: '3',
@@ -57,7 +55,7 @@ export default function Trabajos() {
       availability_status: 'no disponible',
       location: 'xoxoyork',
       rating: '1.0',
-      categoria: 'Diseño' ,
+      categoria: 'Diseño',
     },
     {
       id: '4',
@@ -67,37 +65,42 @@ export default function Trabajos() {
       availability_status: 'no disponible',
       location: 'xoxoyork',
       rating: '5.0',
-      categoria: 'Programación' ,
+      categoria: 'Programación',
     },
   ];
 
   const filtros = ['Todos', 'Diseño', 'Programación', 'Marketing'];
 
-  const trabajosFiltrados =
-    filtro === 'Todos' ? trabajos : trabajos.filter((trabajo) => trabajo.categoria === filtro);
-
+  const profesionalesFiltrados = profesionales.filter((profesional) => {
+    const coincideCategoria = filtro === 'Todos' || profesional.categoria === filtro;
+    const coincideBusqueda = profesional.nombre.toLowerCase().includes(busqueda.toLowerCase());
+    return coincideCategoria && coincideBusqueda;
+  });
   return (
     <View className="flex-1 bg-white">
       {/* Búsqueda */}
       <View className="mx-4 my-3 flex-row items-center rounded-xl border border-gray-300 bg-white px-4 py-2">
         <TextInput
-          placeholder="Buscar trabajo..."
+          placeholder="Buscar profesional..."
           placeholderTextColor="#9CA3AF"
+          value={busqueda}
+          onChangeText={(text) => setBusqueda(text)}
           className="flex-1 text-base text-gray-800"
         />
         <FontAwesome name="search" size={20} color="#9CA3AF" />
       </View>
 
       {/* Filtros */}
-      <View className="h-10">
+      <View className="h-12 border-b border-gray-300 pb-2">
         <FlatList
           data={filtros}
           horizontal
           keyExtractor={(item) => item}
-          contentContainerStyle={{ paddingHorizontal: 5}}
+          contentContainerStyle={{ paddingHorizontal: 5 }}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <TouchableOpacity
+              activeOpacity={0.6}
               className={`mx-1 rounded-2xl bg-blue-600 px-4 py-2 ${filtro === item ? 'opacity-100' : 'opacity-60'}`}
               onPress={() => setFiltro(item)}>
               <Text className="text-sm font-bold text-white">{item}</Text>
@@ -109,7 +112,7 @@ export default function Trabajos() {
       {/* Lista de trabajos */}
       <View className="flex-1 ">
         <FlatList
-          data={trabajosFiltrados}
+          data={profesionalesFiltrados}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}

@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+
+import ProfessionalSelect from 'components/Cliente/professionalSelect';
+import React, { useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, TextInput } from 'react-native';
+
 import Flashcard from '../../components/Cliente/professionalCards';
-import NewContractMessageForm from 'components/Cliente/NewContractMessageForm';
 
 interface Profesional {
   id: string;
@@ -23,6 +19,7 @@ interface Profesional {
 }
 
 export default function Profesionales() {
+
   const [filtro, setFiltro] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -74,7 +71,7 @@ export default function Profesionales() {
       image: 'https://i.pravatar.cc/150?img=8',
     },
   ];
-  
+
   const filtros = ['Todos', 'Diseño', 'Programación', 'Marketing'];
 
   const profesionalesFiltrados = profesionales.filter((prof) => {
@@ -146,11 +143,10 @@ export default function Profesionales() {
 
       {/* Modal de aplicación */}
       {selectedProfessional && (
-        <NewContractMessageForm
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-        />
+        <ProfessionalSelect visible={modalVisible} onClose={() => setModalVisible(false)} />
       )}
     </View>
   );
 }
+
+

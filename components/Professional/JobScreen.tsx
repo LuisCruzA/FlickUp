@@ -31,7 +31,7 @@ const JobScreen: React.FC<JobScreenProps> = ({ visible, trabajo, onClose }) => {
 
   const aplicarAhora = () => {
     onClose(); // Cierra el modal antes de navegar
-    navigation.navigate('MensajesProfessional');
+    navigation.navigate('MensajesPro');
   };
 
   return (

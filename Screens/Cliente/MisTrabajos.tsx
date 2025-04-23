@@ -1,97 +1,77 @@
 import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
 import AddJobForm from 'components/Cliente/AddJobForm';
 import JobInfoClient from 'components/Cliente/JobInfoClient';
 import JobCard from 'components/Professional/JobCard';
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput } from 'react-native';
-interface Trabajo {
-  id: string;
-  titulo: string;
-  publicadoHace: string;
-  precio: string;
-  tiempoDisponible: string;
-  descripcion: string;
-  categoria: string;
-  estado: string;
-  habilidadesRequeridas: string[];
-  nivelComplejidad: string;
-  destacado: boolean;
+import { get } from '@aws-amplify/api-rest';
+import { getCurrentUser } from 'aws-amplify/auth';
+import type { Trabajo } from '~/types';
+
+function calcularTiempoDesde(fechaISO: string): string {
+  const fecha = new Date(fechaISO);
+  const diffMs = Date.now() - fecha.getTime();
+  const diffD = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffD === 0) return 'hoy';
+  if (diffD === 1) return 'ayer';
+  return `hace ${diffD} días`;
 }
+
+function adaptarProyecto(p: any): Trabajo {
+  return {
+    id: p.project_id,
+    titulo: p.title,
+    publicadoHace: calcularTiempoDesde(p.posted_date),
+    precio: `$${p.budget} MXN`,
+    tiempoDisponible: `${p.estimated_duration} días`,
+    descripcion: p.description,
+    categoria: p.category,
+    estado: p.status,
+    habilidadesRequeridas: p.required_skills?.split(',').map((s: string) => s.trim()) ?? [],
+    nivelComplejidad: p.complexity_level,
+    destacado: p.is_featured,
+  };
+}
+
+async function fetchTrabajos(): Promise<Trabajo[]> {
+  const { userId } = await getCurrentUser();
+
+  const restOperation = get({
+    apiName: 'flickupApi',
+    path: '/projects',
+    options: {
+      queryParams: { client_id: userId },
+    },
+  });
+
+  const response = await restOperation.response;
+  const raw = await response.body.json();
+  if (!Array.isArray(raw)) throw new Error('Respuesta no válida');
+
+  const data = raw.map(adaptarProyecto);
+  return data;
+}
+
 export default function MisTrabajos() {
   const [busqueda, setBusqueda] = useState('');
   const [filtro, setFiltro] = useState('Todos');
   const [trabajoActivo, setTrabajoActivo] = useState<Trabajo | null>(null);
-  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
+  const [trabajos, setTrabajos] = useState<Trabajo[]>([]);
 
-  useLayoutEffect(() => {
-    if (trabajoActivo) {
-      navigation.setOptions({ headerShown: false });
-    } else {
-      navigation.setOptions({ headerShown: true });
-    }
-  }, [trabajoActivo]);
+  useEffect(() => {
+    const cargarTrabajos = async () => {
+      try {
+        const trabajos = await fetchTrabajos();
+        setTrabajos(trabajos); // ✅ Aquí sí puedes usarlo
+      } catch (err: any) {
+        console.error('Error al obtener trabajos:', err.message);
+      }
+    };
 
-  const trabajos: Trabajo[] = [
-    {
-      id: '1',
-      titulo: 'Diseño de logotipo para startup',
-      publicadoHace: 'hace 2 días',
-      precio: '$500 MXN',
-      tiempoDisponible: '3 días',
-      descripcion:
-        'Buscamos un diseñador creativo que pueda generar un logotipo moderno y minimalista para una startup tecnológica.',
-      categoria: 'Diseño',
-      estado: 'Abierto',
-      habilidadesRequeridas: ['Illustrator', 'Photoshop', 'Branding'],
-      nivelComplejidad: 'Baja',
-      destacado: true,
-    },
-    {
-      id: '2',
-      titulo: 'Desarrollo de landing page',
-      publicadoHace: 'hace 5 horas',
-      precio: '$1200 MXN',
-      tiempoDisponible: '1 semana',
-      descripcion:
-        'Se requiere crear una landing page en React con animaciones suaves y secciones responsivas.',
-      categoria: 'Programación',
-      estado: 'Abierto',
-      habilidadesRequeridas: ['React', 'HTML', 'CSS', 'JavaScript', 'Tailwind'],
-      nivelComplejidad: 'Media',
-      destacado: false,
-    },
-    {
-      id: '3',
-      titulo: 'Pene',
-      publicadoHace: 'hace 1 día',
-      precio: '$800 MXN',
-      tiempoDisponible: '4 días',
-      descripcion:
-        'Se busca experto en SEO para mejorar el posicionamiento en buscadores de un sitio WordPress.',
-      categoria: 'Marketing',
-      estado: 'Abierto',
-      habilidadesRequeridas: ['SEO', 'Google Analytics', 'WordPress'],
-      nivelComplejidad: 'Media',
-      destacado: true,
-    },
-    {
-      id: '4',
-      titulo: 'Desarrollo de backend para app móvil',
-      publicadoHace: 'hace 3 días',
-      precio: '$2500 MXN',
-      tiempoDisponible: '2 semanas',
-      descripcion:
-        'Se necesita backend developer con experiencia en Node.js y Firebase para crear la API de una app de servicios.',
-      categoria: 'Programación',
-      estado: 'En progreso',
-      habilidadesRequeridas: ['Node.js', 'Firebase', 'REST API', 'MongoDB'],
-      nivelComplejidad: 'Alta',
-      destacado: false,
-    },
-  ];
+    cargarTrabajos();
+  }, []);
 
   const filtros = ['Todos', 'Diseño', 'Programación', 'Marketing'];
 
@@ -99,7 +79,7 @@ export default function MisTrabajos() {
     const coincideCategoria = filtro === 'Todos' || trabajo.categoria === filtro;
     const coincideBusqueda = trabajo.titulo.toLowerCase().includes(busqueda.toLowerCase());
     return coincideCategoria && coincideBusqueda;
-  });  
+  });
   return (
     <View className="flex-1 bg-white">
       {/* Búsqueda */}

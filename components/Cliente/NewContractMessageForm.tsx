@@ -13,16 +13,20 @@ import {
 
 const NewContractMessageForm = ({
   visible,
+  project_title,
   onClose,
+  onSubmit,
 }: {
   visible: boolean;
+  project_title: string;
   onClose: () => void;
+  onSubmit: (data: any) => void;
 }) => {
   const [form, setForm] = useState<{ [key: string]: string }>({
-    titulo: '',
-    proposed_amount: '',
-    cover_letter: '',
-    estimated_duration: '',
+    start_date: '',
+    end_date: '',
+    agreed_amount: '',
+    payment_terms: '',
   });
 
   const handleChange = (key: string, value: string) => {
@@ -31,34 +35,36 @@ const NewContractMessageForm = ({
 
   const closeModal = () => {
     setForm({
-      titulo: '',
-      proposed_amount: '',
-      cover_letter: '',
-      estimated_duration: '',
+      start_date: '',
+      end_date: '',
+      agreed_amount: '',
+      payment_terms: '',
     });
     onClose();
   };
 
   const handleSubmit = () => {
     try {
-      const camposObligatorios = ['titulo', 'proposed_amount', 'cover_letter', 'estimated_duration'];
+      const requiredFields = ['start_date', 'end_date', 'agreed_amount', 'payment_terms'];
 
-      for (const campo of camposObligatorios) {
-        if (!form[campo] || form[campo].trim() === '') {
-          throw new Error(`El campo "${campo}" no puede estar vacío.`);
+      for (const field of requiredFields) {
+        if (!form[field] || form[field].trim() === '') {
+          throw new Error(`El campo "${field}" no puede estar vacío.`);
         }
       }
 
-      const jobApplication = {
-        titulo: form.titulo,
-        proposed_amount: parseFloat(form.proposed_amount),
-        cover_letter: form.cover_letter,
-        estimated_duration: parseInt(form.estimated_duration),
+      const contractData = {
+        project_title,
+        start_date: new Date(form.start_date).toISOString(),
+        end_date: new Date(form.end_date).toISOString(),
+        agreed_amount: parseFloat(form.agreed_amount),
+        payment_terms: form.payment_terms.trim(),
+        status: 'pendiente',
         submitted_at: new Date().toISOString(),
-        status: 'Enviado',
       };
 
-      console.log('📤 Datos enviados:', jobApplication);
+      console.log('📤 Contrato propuesto:', contractData);
+      onSubmit(contractData);
       closeModal();
     } catch (error: any) {
       alert(error.message);
@@ -72,30 +78,24 @@ const NewContractMessageForm = ({
         className="flex-1 bg-white"
       >
         <ScrollView className="p-6 pt-20">
-          <Text className="text-2xl font-bold mb-4">Aplicar a trabajo</Text>
+          <Text className="text-2xl font-bold mb-1">Contrato</Text>
+          <Text className="mb-6 text-gray-700 italic text-base">{project_title}</Text>
 
-          {/* Campos de formulario actualizados */}
           {[
-            { label: 'Título del proyecto', key: 'titulo' },
-            { label: 'Monto propuesto (MXN)', key: 'proposed_amount', keyboardType: 'numeric' },
+            { label: 'Fecha de inicio (YYYY-MM-DD)', key: 'start_date' },
+            { label: 'Fecha de entrega (YYYY-MM-DD)', key: 'end_date' },
+            { label: 'Monto acordado (MXN)', key: 'agreed_amount', keyboardType: 'numeric' },
             {
-              label: 'Carta de presentación',
-              key: 'cover_letter',
+              label: 'Condiciones de pago',
+              key: 'payment_terms',
               multiline: true,
               style: 'h-32 text-top',
-            },
-            {
-              label: 'Duración estimada (días)',
-              key: 'estimated_duration',
-              keyboardType: 'numeric',
             },
           ].map(({ label, key, multiline, style, keyboardType }) => (
             <View key={key} className="mb-4">
               <Text className="text-sm font-medium mb-1">{label}</Text>
               <TextInput
-                className={`border border-gray-300 rounded-lg px-3 py-2 text-sm ${
-                  style || ''
-                }`}
+                className={`border border-gray-300 rounded-lg px-3 py-2 text-sm ${style || ''}`}
                 value={form[key]}
                 onChangeText={(text) => handleChange(key, text)}
                 multiline={multiline}
@@ -104,7 +104,6 @@ const NewContractMessageForm = ({
             </View>
           ))}
 
-          {/* Botones */}
           <View className="flex-row justify-between gap-3 mt-6">
             <TouchableOpacity
               onPress={closeModal}
@@ -115,7 +114,7 @@ const NewContractMessageForm = ({
 
             <TouchableOpacity
               onPress={handleSubmit}
-              className="flex-1 rounded-xl bg-blue-500 py-4 items-center"
+              className="flex-1 rounded-xl bg-blue-600 py-4 items-center"
             >
               <Text className="text-white font-semibold">Enviar</Text>
             </TouchableOpacity>

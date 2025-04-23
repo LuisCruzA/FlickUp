@@ -5,14 +5,12 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import JobCard from 'components/Professional/JobCard';
-import JobInfoScreen from 'components/Professional/JobScreen';
+import JobScreen from 'components/Professional/JobScreen';
+
 interface Trabajo {
   id: string;
   titulo: string;
@@ -26,17 +24,14 @@ interface Trabajo {
   nivelComplejidad: string;
   destacado: boolean;
 }
+
 export default function Trabajos() {
   const [filtro, setFiltro] = useState('Todos');
   const [trabajoActivo, setTrabajoActivo] = useState<Trabajo | null>(null);
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
-    if (trabajoActivo) {
-      navigation.setOptions({ headerShown: false });
-    } else {
-      navigation.setOptions({ headerShown: true });
-    }
+    navigation.setOptions({ headerShown: !trabajoActivo });
   }, [trabajoActivo]);
 
   const trabajos: Trabajo[] = [
@@ -153,8 +148,14 @@ export default function Trabajos() {
           )}
         />
       </View>
+
+      {/* Modal de detalles del trabajo */}
       {trabajoActivo && (
-        <JobInfoScreen trabajo={trabajoActivo} onClose={() => setTrabajoActivo(null)} />
+        <JobScreen
+          visible={true}
+          trabajo={trabajoActivo}
+          onClose={() => setTrabajoActivo(null)}
+        />
       )}
     </View>
   );

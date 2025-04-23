@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 interface FlashcardProps {
   titulo: string;
   contratoPersona: string;
   descripcion: string;
   fecha: string;
+  onPress: () => void
+
 }
 
 
@@ -15,8 +17,11 @@ const Flashcard: React.FC<FlashcardProps> = ({
   contratoPersona,
   descripcion,
   fecha,
+  onPress,
 }) => {
   return (
+    <TouchableOpacity activeOpacity={0.6}
+    onPress={onPress}>
     <View className="bg-white p-5 rounded-2xl shadow-md m-4">
       <Text className="text-xl font-bold text-blue-600">{titulo}</Text>
       <Text className="text-sm text-gray-500 mt-1">Contratado por {contratoPersona}</Text>
@@ -28,6 +33,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
 
 
     </View>
+    </TouchableOpacity>
   );
 };
 

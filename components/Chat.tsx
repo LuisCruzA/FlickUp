@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useLayoutEffect} from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,17 @@ import {
   Platform,
   TouchableOpacity,
   TextInput,
+  
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 
 import { Ionicons, AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import NewContractMessageForm from './Cliente/NewContractMessageForm';
+
 const mensajesMock: {
+  
   [key: string]: {
     name: string;
     avatar: string;
@@ -83,6 +89,7 @@ const mensajesMock: {
 };
 
 const Chat = ({
+  
   onBack,
   chatId,
   userId,
@@ -93,63 +100,73 @@ const Chat = ({
 }) => {
   const chat = mensajesMock[chatId];
   const mensajes = chat?.mensajes || [];
+  const [modalVisible, setModalVisible] = useState(false);
+  //const [trabajoActivo, setTrabajoActivo] = useState<Trabajo | null>(null);
+  const navigation = useNavigation();
+
+  
 
   return (
-    
-      <KeyboardAvoidingView
-        className="flex-1 bg-white pt-12"
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        {/* Header */}
-        <View className="flex-row items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
-          <View className="flex-row items-center gap-3">
-            <TouchableOpacity onPress={onBack}>
-              <AntDesign name="arrowleft" size={24} color="black" />
-            </TouchableOpacity>
-            <Image source={{ uri: chat.avatar }} className="h-12 w-12 rounded-full" />
-            <View>
-              <Text className="text-sm font-semibold text-black">{chat.name}</Text>
-              <Text className="text-xs text-gray-500">{chat.last_active}</Text>
-            </View>
-          </View>
-          <View className="flex-row items-center gap-4">
-            <TouchableOpacity>
-              <Feather name="phone" size={22} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <MaterialIcons name="videocam" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Mensajes */}
-        <View className="flex-1 bg-white px-4 pt-3">
-          <FlatList
-            data={mensajes}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View
-                className={`mb-4 max-w-[70%] rounded-lg px-4 py-2  ${
-                  item.sender_id === userId ? 'self-end bg-blue-100' : 'self-start bg-gray-100'
-                }`}>
-                <Text className="text-md text-black">{item.texto}</Text>
-              </View>
-            )}
-          />
-        </View>
-
-        {/* Input */}
-        <View className="bottom-0 left-0 right-0 flex-row items-center border-t border-gray-200 bg-white px-4 py-3">
-          <TextInput
-            className="mr-2 flex-1 rounded-full bg-gray-100 px-4 py-2 text-base text-black"
-            placeholder="Escribe un mensaje..."
-            placeholderTextColor="#9CA3AF"
-          />
-          <TouchableOpacity>
-            <Ionicons name="send" size={24} color="#3B82F6" />
+    <KeyboardAvoidingView
+      className="flex-1 bg-white pt-12"
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      {/* Header */}
+      <View className="flex-row items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
+        <View className="flex-row items-center gap-3">
+          <TouchableOpacity onPress={onBack}>
+            <AntDesign name="arrowleft" size={24} color="black" />
           </TouchableOpacity>
+          <Image source={{ uri: chat.avatar }} className="h-12 w-12 rounded-full" />
+          <View>
+            <Text className="text-sm font-semibold text-black">{chat.name}</Text>
+            <Text className="text-xs text-gray-500">{chat.last_active}</Text>
+          </View>
         </View>
-      </KeyboardAvoidingView>
+        <View className="flex-row items-center gap-4">
+          <TouchableOpacity>
+            <Feather name="phone" size={22} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+          
 
+          <View className="flex-row rounded-full items-center bg-blue-500">
+  <Text className="mr-2 text-white">Contract</Text>
+  <MaterialIcons name="add" size={24} color="white" />
+            </View>
+          </TouchableOpacity>
+          <NewContractMessageForm visible={modalVisible} onClose={() => setModalVisible(false)} />
+      
+        </View>
+      </View>
+
+      {/* Mensajes */}
+      <View className="flex-1 bg-white px-4 pt-3">
+        <FlatList
+          data={mensajes}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View
+              className={`mb-4 max-w-[70%] rounded-lg px-4 py-2  ${
+                item.sender_id === userId ? 'self-end bg-blue-100' : 'self-start bg-gray-100'
+              }`}>
+              <Text className="text-md text-black">{item.texto}</Text>
+            </View>
+          )}
+        />
+      </View>
+
+      {/* Input */}
+      <View className="bottom-0 left-0 right-0 flex-row items-center border-t border-gray-200 bg-white px-4 py-3">
+        <TextInput
+          className="mr-2 flex-1 rounded-full bg-gray-100 px-4 py-2 text-base text-black"
+          placeholder="Escribe un mensaje..."
+          placeholderTextColor="#9CA3AF"
+        />
+        <TouchableOpacity>
+          <Ionicons name="send" size={24} color="#3B82F6" />
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -126,4 +126,3 @@ const NewContractMessageForm = ({
 };
 
 export default NewContractMessageForm;
-

@@ -49,7 +49,7 @@ function MyTabs() {
         }}
       />
       <Tab.Screen
-        name="Mensajes"
+        name="MensajesPro"
         component={MensajesPro}
         options={{
           headerTitle: 'Mensajes',

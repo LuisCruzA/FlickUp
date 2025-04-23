@@ -3,6 +3,7 @@ import NavigationClient from './components/Cliente/NavigationClient'
 import NavigationProfessional from './components/Professional/NavigationProfessional'
 import LoginScreen from 'Screens/LoginScreen'
 import RegisterScreen from 'Screens/RegisterScreen'
+import ConfirmCodeScreen from 'Screens/ConfirmCodeScreen'
 import './global.css'
 
 import { Amplify } from 'aws-amplify'
@@ -13,7 +14,9 @@ type Usuario = { rol: 'cliente' | 'profesional' }
 
 export default function App() {
   const [usuario, setUsuario] = useState<Usuario | null>(null)
-  const [screen, setScreen] = useState<'login' | 'register'>('login')
+  const [screen, setScreen] = useState<'login'|'register'|'confirm'>('login');
+  const [pending, setPending] = useState<{username:string; rol:'cliente'|'profesional'}|null>(null);
+
 
   if (!usuario) {
     if (screen === 'login')
@@ -22,15 +25,22 @@ export default function App() {
           onLogin={setUsuario}
           onRegisterRequest={() => setScreen('register')}
         />
-      )
+      );
+    if (screen === 'register')
+        return (
+          <RegisterScreen
+            onRegistered={(u)=>{ setPending(u); setScreen('confirm'); }}
+            onBack={()=>setScreen('login')}
+          />
+        );
     return (
-      <RegisterScreen
-        onSuccess={(u) => {
-          setUsuario(u)
-        }}
-        onBack={() => setScreen('login')}
-      />
-    )
+        <ConfirmCodeScreen
+          username={pending!.username}
+          rol={pending!.rol}
+          onConfirmed={(u)=>setUsuario(u)}
+          onBack={()=>setScreen('register')}
+        />
+      );
   }
 
   return usuario.rol === 'cliente' ? <NavigationClient /> : <NavigationProfessional />

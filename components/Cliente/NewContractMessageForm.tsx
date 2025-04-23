@@ -14,11 +14,9 @@ import {
 const NewContractMessageForm = ({
   visible,
   onClose,
-  onSubmit,
 }: {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (form: { [key: string]: string }) => void;
 }) => {
   const [form, setForm] = useState<{ [key: string]: string }>({
     titulo: '',
@@ -51,7 +49,16 @@ const NewContractMessageForm = ({
         }
       }
 
-      onSubmit(form); // ← llama al padre para insertar la "card" en el chat
+      const jobApplication = {
+        titulo: form.titulo,
+        proposed_amount: parseFloat(form.proposed_amount),
+        cover_letter: form.cover_letter,
+        estimated_duration: parseInt(form.estimated_duration),
+        submitted_at: new Date().toISOString(),
+        status: 'Enviado',
+      };
+
+      console.log('📤 Datos enviados:', jobApplication);
       closeModal();
     } catch (error: any) {
       alert(error.message);
@@ -65,14 +72,14 @@ const NewContractMessageForm = ({
         className="flex-1 bg-white"
       >
         <ScrollView className="p-6 pt-20">
-          <Text className="text-2xl font-bold mb-4">Aplicar a trabajo</Text>
+          <Text className="text-2xl font-bold mb-4">Propuesta</Text>
 
-          {/* Campos del formulario */}
+          {/* Campos de formulario actualizados */}
           {[
             { label: 'Título del proyecto', key: 'titulo' },
             { label: 'Monto propuesto (MXN)', key: 'proposed_amount', keyboardType: 'numeric' },
             {
-              label: 'Carta de presentación',
+              label: 'Descripción',
               key: 'cover_letter',
               multiline: true,
               style: 'h-32 text-top',
@@ -108,7 +115,7 @@ const NewContractMessageForm = ({
 
             <TouchableOpacity
               onPress={handleSubmit}
-              className="flex-1 rounded-xl bg-blue-500 py-4 items-center"
+              className="flex-1 rounded-xl bg-blue-600 py-4 items-center"
             >
               <Text className="text-white font-semibold">Enviar</Text>
             </TouchableOpacity>

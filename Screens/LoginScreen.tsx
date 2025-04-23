@@ -40,7 +40,7 @@ const LoginScreen = ({ onLogin, onRegisterRequest }: Props) => {
 
       // ▸ Cambia esta lógica por la que uses realmente para el rol
       const rol: 'cliente' | 'profesional' =
-        email.trim().toLowerCase().startsWith('c') ? 'cliente' : 'profesional';
+        email.trim().toLowerCase().startsWith('l') ? 'cliente' : 'profesional';
 
       onLogin({ rol });
     } catch (err: any) {

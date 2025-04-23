@@ -15,7 +15,6 @@ import { useNavigation } from '@react-navigation/native';
 
 import { Ionicons, AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import NewContractMessageForm from './Cliente/NewContractMessageForm';
 
 const mensajesMock: {
   
@@ -129,12 +128,8 @@ const Chat = ({
           <TouchableOpacity onPress={() => setModalVisible(true)}>
           
 
-          <View className="flex-row rounded-full items-center bg-blue-500">
-  <Text className="mr-2 text-white">Contract</Text>
-  <MaterialIcons name="add" size={24} color="white" />
-            </View>
+          
           </TouchableOpacity>
-          <NewContractMessageForm visible={modalVisible} onClose={() => setModalVisible(false)} />
       
         </View>
       </View>

@@ -115,7 +115,7 @@ const NewContractMessageForm = ({
 
             <TouchableOpacity
               onPress={handleSubmit}
-              className="flex-1 rounded-xl bg-blue-500 py-4 items-center"
+              className="flex-1 rounded-xl bg-blue-600 py-4 items-center"
             >
               <Text className="text-white font-semibold">Enviar</Text>
             </TouchableOpacity>

@@ -10,6 +10,9 @@ export default function Finanzas() {
     { id: '4', titulo: 'Trabajos realizados', monto: '45' },
   ];
 
+  const ingresos12m = parseInt(finanzas[2].monto);
+  const trabajos   = parseInt(finanzas[3].monto, 10);
+
   return (
     <View className="flex-1 bg-white">
       <View className="bg-white-100 flex-[0.22]">
@@ -33,7 +36,7 @@ export default function Finanzas() {
             <View className="mt-6">
               <Text className="text-center text-gray-500">Última actualización: hoy</Text>
               <View className='flex-1 mt-10'>
-               <FinanzasButton/>
+              <FinanzasButton ingresosUlt6m={ingresos12m}numTrabajos={trabajos}/>
               </View>
             </View>
           }

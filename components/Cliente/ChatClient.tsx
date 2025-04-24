@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,76 +12,9 @@ import {
 import ContractCardClient from 'components/Cliente/ContractCardClient';
 import { Ionicons, AntDesign, MaterialIcons } from '@expo/vector-icons';
 import NewContractMessageForm from './NewContractMessageForm';
+import { get, post } from '@aws-amplify/api-rest';
+import type { Mensaje, Chat } from '~/types';
 
-const mensajesMock: {
-  [key: string]: {
-    name: string;
-    avatar: string;
-    project_title: string;
-    mensajes: { id: string; sender_id: string; texto: string }[];
-  };
-} = {
-  '1': {
-    name: 'Bruno Espina',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    project_title: 'Diseño de logotipo para startup',
-    mensajes: [
-      { id: '1', sender_id: '123', texto: 'Hola, ¿cómo estás?' },
-      { id: '2', sender_id: '456', texto: 'Bien, ¿y tú?' },
-      { id: '3', sender_id: '123', texto: 'Todo bien, gracias :)' },
-    ],
-  },
-  '2': {
-    name: 'nebulanomad',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-    project_title: 'Landing page en React con animaciones',
-    mensajes: [
-      { id: '1', sender_id: '123', texto: '¿Estás disponible esta semana?' },
-      { id: '2', sender_id: '456', texto: 'Sí, ¿qué necesitas?' },
-    ],
-  },
-  '3': {
-    name: 'emberecho',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    project_title: 'Campaña de marketing de verano',
-    mensajes: [
-      { id: '1', sender_id: '456', texto: '¡Buen trabajo con el proyecto!' },
-      { id: '2', sender_id: '123', texto: 'Gracias, un placer trabajar contigo.' },
-    ],
-  },
-  '4': {
-    name: 'lunavoyager',
-    avatar: 'https://i.pravatar.cc/150?img=4',
-    project_title: 'Ilustraciones personalizadas para redes',
-    mensajes: [
-      { id: '1', sender_id: '123', texto: 'Te amo, perdón por todo :C' },
-      { id: '2', sender_id: '456', texto: 'No pasa nada, todo bien 💛' },
-      { id: '3', sender_id: '123', texto: '¿De verdad?' },
-      { id: '4', sender_id: '456', texto: 'Sí, ya pasó. 😊' },
-    ],
-  },
-  '5': {
-    name: 'shadowlynx',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    project_title: 'Optimización SEO para eCommerce',
-    mensajes: [
-      { id: '1', sender_id: '456', texto: 'Hey! Whats up?' },
-      { id: '2', sender_id: '123', texto: 'Todo bien, ¿y tú?' },
-      { id: '3', sender_id: '456', texto: 'Relajado, solo viendo qué hacer hoy' },
-    ],
-  },
-  '6': {
-    name: 'fernandx',
-    avatar: 'https://i.pravatar.cc/150?img=6',
-    project_title: 'Backend para app de servicios (Node.js + Firebase)',
-    mensajes: [
-      { id: '1', sender_id: '456', texto: '¿Cuánto me cobras por cambiar el motor?' },
-      { id: '2', sender_id: '123', texto: 'Depende del modelo. ¿Qué coche es?' },
-      { id: '3', sender_id: '456', texto: 'Un Jetta 2009' },
-      { id: '4', sender_id: '123', texto: 'Te paso precio en un momento 👌' },
-    ],
-  },
-};
 type Contrato = {
   project_title: string;
   start_date: string;
@@ -92,23 +25,121 @@ type Contrato = {
   submitted_at: string;
 };
 
-const contratoPendiente: Contrato  = {
-    project_title: 'Landing page para negocio local',
-    start_date: '2024-05-01',
-    end_date: '2024-05-10',
-    agreed_amount: 1500,
-    payment_terms: 'Pago 50% al iniciar, 50% al entregar',
-    status: 'pendiente',
-    submitted_at: '2024-04-28T15:00:00Z',
-  };
-  
+const contratoPendiente: Contrato = {
+  project_title: 'Landing page para negocio local',
+  start_date: '2024-05-01',
+  end_date: '2024-05-10',
+  agreed_amount: 1500,
+  payment_terms: 'Pago 50% al iniciar, 50% al entregar',
+  status: 'pendiente',
+  submitted_at: '2024-04-28T15:00:00Z',
+};
 
-const ChatClient = ({ onBack, chatId, userId,}: { onBack: () => void; chatId: string; userId: string;}) => {
-  const chat = mensajesMock[chatId];
-  const mensajes = chat?.mensajes || [];
+async function fetchMensajes(
+  idUser: string,
+  idOtraPersona: string,
+  idProject: string
+): Promise<Mensaje[]> {
+  const res = await get({
+    apiName: 'flickupApi',
+    path: '/messages',
+    options: {
+      queryParams: {
+        idUser,
+        idOtraPersona,
+        idProject,
+      },
+    },
+  });
+
+  const response = await res.response;
+  let data;
+  try {
+    data = await response.body.json();
+  } catch (e) {
+    console.error('Error al parsear JSON de mensajes:', e);
+  }
+
+  if (!Array.isArray(data)) throw new Error('Respuesta no válida');
+  return data as Mensaje[];
+}
+
+async function enviarMensaje({
+  idUser,
+  idOtraPersona,
+  idProject,
+  texto,
+}: {
+  idUser: string;
+  idOtraPersona: string;
+  idProject: string;
+  texto: string;
+}) {
+  const res = await post({
+    apiName: 'flickupApi',
+    path: '/messages',
+    options: {
+      body: {
+        idUser,
+        idOtraPersona,
+        idProject,
+        texto,
+      },
+    },
+  });
+
+  const response = await res.response;
+  const data = await response.body.json();
+  return data;
+}
+const ChatClient = ({
+  chat,
+  userId,
+  onBack,
+}: {
+  chat: Chat;
+  userId: string;
+  onBack: () => void;
+}) => {
+  const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [contrato, setContrato] = useState<Contrato | null>(null);
+  const [mensajeNuevo, setMensajeNuevo] = useState('');
 
+  4;
+
+  useEffect(() => {
+    const cargarMensajes = async () => {
+      try {
+        const mensajesBD = await fetchMensajes(userId, chat.id_otrapersona, chat.id_project);
+        setMensajes(mensajesBD);
+      } catch (err: any) {
+        console.error('Error al cargar mensajes:', err.message);
+      }
+    };
+
+    cargarMensajes();
+  }, [userId, chat.id_otrapersona, chat.id_project]);
+  const handleEnviarMensaje = async () => {
+    if (!mensajeNuevo.trim()) return;
+  
+    try {
+      const nuevo = await enviarMensaje({
+        idUser: userId,
+        idOtraPersona: chat.id_otrapersona,
+        idProject: chat.id_project,
+        texto: mensajeNuevo.trim(),
+      })as Mensaje;
+  
+      // Agregar el mensaje al final del chat localmente
+      setMensajes((prev) => [...prev, nuevo]);
+      setMensajeNuevo('');
+    } catch (error: any) {
+      console.error('Error al enviar mensaje:', error.message);
+      alert('No se pudo enviar el mensaje');
+    }
+  };
+  
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white pt-12"
@@ -143,9 +174,8 @@ const ChatClient = ({ onBack, chatId, userId,}: { onBack: () => void; chatId: st
       {contratoPendiente && (
         <View className="px-4 pt-6">
           {contratoPendiente && contratoPendiente.status === 'pendiente' && (
-  <ContractCardClient contrato={contratoPendiente} />
-)}
-
+            <ContractCardClient contrato={contratoPendiente} />
+          )}
         </View>
       )}
 
@@ -168,11 +198,13 @@ const ChatClient = ({ onBack, chatId, userId,}: { onBack: () => void; chatId: st
       {/* Input */}
       <View className="bottom-0 left-0 right-0 flex-row items-center border-t border-gray-200 bg-white px-4 py-3">
         <TextInput
+        value={mensajeNuevo}
+        onChangeText={setMensajeNuevo}
           className="mr-2 flex-1 rounded-full bg-gray-100 px-4 py-2 text-base text-black"
           placeholder="Escribe un mensaje..."
           placeholderTextColor="#9CA3AF"
         />
-        <TouchableOpacity>
+        <TouchableOpacity  onPress={handleEnviarMensaje}>
           <Ionicons name="send" size={24} color="#3B82F6" />
         </TouchableOpacity>
       </View>

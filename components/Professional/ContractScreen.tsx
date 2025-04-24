@@ -9,14 +9,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { Contrato } from '~/types';
 
-interface Contrato {
-  id: string;
-  titulo: string;
-  contratoPersona: string;
-  descripcion: string;
-  fecha: string;
-}
+
 
 interface ContratoScreenProps {
   visible: boolean;
@@ -52,20 +47,31 @@ const ContractScreen: React.FC<ContratoScreenProps> = ({ visible, contrato, onCl
           {/* Título */}
           <View className="mb-6  p-4 bg-blue-50">
             <Text className="text-2xl font-bold text-blue-800">{contrato.titulo}</Text>
-            <Text className="text-sm text-gray-600 mt-1">Fecha de publicación: {contrato.fecha}</Text>
+            <Text className="text-sm text-gray-600 mt-1">
+  Fecha de inicio: {contrato.fechaInicio}
+  {contrato.estatus.toLowerCase() !== 'activo' && (
+    <>
+      {"\n"}Finalizó: {contrato.fechaFin}
+    </>
+  )}
+</Text>
+
           </View>
 
           {/* Contratante */}
           <View className="mb-6  p-4 bg-white">
-            <Text className="text-lg font-semibold text-gray-800 mb-1">Contratante</Text>
-            <Text className="text-gray-700">{contrato.contratoPersona}</Text>
+            <Text className="text-lg font-semibold text-gray-800 mb-1">Descripción</Text>
+            <Text className="text-gray-700">{contrato.descripcion}</Text>
           </View>
 
           {/* Descripción */}
           <View className="mb-6  p-4 bg-white">
-            <Text className="text-lg font-semibold text-gray-800 mb-1">Descripción del contrato</Text>
-            <Text className="text-gray-700 leading-relaxed">{contrato.descripcion}</Text>
+            <Text className="text-lg font-semibold text-gray-800 mb-1">Terminos de pago</Text>
+            <Text className="text-gray-700 leading-relaxed">{contrato.descripcionpago}</Text>
+
           </View>
+          <Text className="text-base font-bold text-black-600">Precio: ${contrato.precio}</Text>
+
         </ScrollView>
       </SafeAreaView>
     </Modal>

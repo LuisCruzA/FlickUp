@@ -49,6 +49,14 @@
           ],
           "category": "function",
           "resourceName": "me"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "stripeFn"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -184,6 +192,27 @@
       "service": "Lambda"
     },
     "proposalsFn": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickuppgLayer"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickupHelperLayer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "stripeFn": {
       "build": true,
       "dependsOn": [
         {
@@ -456,6 +485,46 @@
         {
           "category": "function",
           "resourceName": "proposalsFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_stripeFn_dbName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "stripeFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_stripeFn_dbSecretArn": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "stripeFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_stripeFn_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "stripeFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_stripeFn_proxyEndpoint": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "stripeFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_stripeFn_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "stripeFn"
         }
       ]
     },

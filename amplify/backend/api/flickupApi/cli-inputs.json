@@ -42,6 +42,18 @@
       "permissions": {
         "setting": "open"
       }
+    },
+    "/stripe": {
+      "name": "/stripe",
+      "lambdaFunction": "stripeFn",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update"
+        ]
+      }
     }
   }
 }

@@ -1,87 +1,140 @@
-import { Picker } from '@react-native-picker/picker';
-import React, { useState } from 'react';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
+  FlatList,
 } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { get, post } from '@aws-amplify/api-rest';
+import { getCurrentUser } from 'aws-amplify/auth';
+import type { Trabajo } from '~/types';
 
-const ProfessionalSelect = ({
-  visible,
-  onClose,
+function adaptarProyecto(p: any): any {
+  return {
+    id: p.project_id,
+    titulo: p.title,
+  };
+}
+
+async function fetchTrabajos(): Promise<Trabajo[]> {
+  const { userId } = await getCurrentUser();
+  const restOperation = get({
+    apiName: 'flickupApi',
+    path: '/projects',
+    options: {
+      queryParams: { client_id: userId },
+    },
+  });
+  const response = await restOperation.response;
+  const raw = await response.body.json();
+  if (!Array.isArray(raw)) throw new Error('Respuesta no válida');
+  return raw.map(adaptarProyecto);
+}
+
+async function crearMensajeInicial({
+  receiverId,
+  projectId,
+  content,
 }: {
-  visible: boolean;
-  onClose: () => void;
-}) => {
-  const categorias = ['Diseño', 'Programación', 'Marketing'];
-  const [selectedCategory, setSelectedCategory] = useState<string>(categorias[0]);
+  receiverId: string;
+  projectId: string;
+  content: string;
+}) {
+  const { userId } = await getCurrentUser();
+
+  const restOperation = post({
+    apiName: 'flickupApi',
+    path: '/messages',
+    options: {
+      body: {
+        idUser: userId,
+        idOtraPersona: receiverId,
+        idProject: projectId,
+        texto: content
+    },
+    },
+  });
+
+  const response = await restOperation.response;
+  return response.body.json(); // opcional: devuelve el mensaje creado
+}
+
+const ProfessionalSelect = ({ id_professional, visible, onClose }: { id_professional: string,visible: boolean; onClose: () => void }) => {
+  const [trabajos, setTrabajos] = useState<Trabajo[]>([]);
+  const [seleccionado, setSeleccionado] = useState<Trabajo | null>(null);
   const navigation = useNavigation<NavigationProp<any>>();
 
-  const aplicarAhora = () => {
-    onClose(); // Cierra el modal antes de navegar
-    navigation.navigate('Mensajes');
-  };
-  const closeModal = () => {
-    setSelectedCategory(categorias[0]);
-    onClose();
-  };
-
-  const handleSubmit = () => {
-    const jobApplication = {
-      categoria: selectedCategory,
-      submitted_at: new Date().toISOString(),
-      status: 'Enviado',
+  useEffect(() => {
+    const cargar = async () => {
+      try {
+        const t = await fetchTrabajos();
+        setTrabajos(t);
+      } catch (e) {
+        console.error(' Error al cargar trabajos:', e);
+      }
     };
+    if (visible) cargar();
+  }, [visible]);
 
-    console.log('📤 Categoría seleccionada:', jobApplication);
-    closeModal();
+  const handleEnviarMensaje = async () => {
+    try {
+      const content = 'Hola, tengo el trabajo '+ seleccionado?.titulo;
+      console.log(id_professional)
+      const receiverId = id_professional;
+      const projectId: any = seleccionado?.id;
+
+      await crearMensajeInicial({ receiverId, projectId, content });
+
+      navigation.navigate('Mensajes', {
+        projectId,
+        receiverId,
+      });
+    } catch (error) {
+      console.error('Error al crear mensaje:', error);
+      alert('No se pudo enviar el mensaje');
+    }
   };
 
   return (
     <Modal visible={visible} animationType="slide">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1 bg-white"
-      >
-        <ScrollView className="p-6 pt-20">
-          <Text className="text-2xl font-bold mb-4">¿Para que quieres contratar?</Text>
+        className="flex-1 bg-white">
+        <View className="px-6 pt-20">
+          <Text className="mb-4 text-2xl font-bold">Selecciona un trabajo</Text>
 
-          <View className="border border-gray-300 rounded-lg overflow-hidden">
-            <Picker
-              selectedValue={selectedCategory}
-              onValueChange={(itemValue: React.SetStateAction<string>) => setSelectedCategory(itemValue)}
-              style={{ height: 200 }}
-              itemStyle={{ fontSize: 18 }}
-            >
-              {categorias.map((cat) => (
-                <Picker.Item key={cat} label={cat} value={cat} />
-              ))}
-            </Picker>
-          </View>
+          <FlatList
+            data={trabajos}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                className={`mb-2 rounded-lg border px-4 py-3 ${
+                  seleccionado?.id === item.id ? 'border-blue-600 bg-blue-50' : 'border-gray-300'
+                }`}
+                onPress={() => setSeleccionado(item)}>
+                <Text className="text-base font-medium text-black">{item.titulo}</Text>
+              </TouchableOpacity>
+            )}
+          />
 
-          {/* Botones */}
-          <View className="flex-row justify-between gap-3 mt-6">
+          <View className="mt-6 flex-row justify-between gap-3">
             <TouchableOpacity
-              onPress={closeModal}
-              className="flex-1 rounded-xl bg-gray-300 py-4 items-center"
-            >
-              <Text className="text-gray-800 font-semibold">Cancelar</Text>
+              onPress={onClose}
+              className="flex-1 items-center rounded-xl bg-gray-300 py-4">
+              <Text className="font-semibold text-gray-800">Cancelar</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={aplicarAhora}
-              className="flex-1 rounded-xl bg-blue-600 py-4 items-center"
-            >
-              <Text className="text-white font-semibold">Enviar</Text>
+              onPress={handleEnviarMensaje}
+              className="flex-1 items-center rounded-xl bg-blue-600 py-4">
+              <Text className="font-semibold text-white">Enviar Mensaje</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </Modal>
   );

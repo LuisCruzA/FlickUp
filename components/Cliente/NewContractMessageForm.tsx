@@ -13,24 +13,26 @@ import {
   Alert,
 } from 'react-native';
 import { post } from 'aws-amplify/api';
-
-
+import type { Chat } from '~/types';
 interface ContractFormProps {
-  visible: boolean;
-  project_title: string;
-  onClose: () => void;
-  onSubmit: (data: any) => void;
-}
+    visible: boolean;
+    chat: Chat;
+    userId: string;
+    onClose: () => void;
+    onSubmit: (data: any) => void;
+  }
+  
 
 interface PaymentSheetParams {
   paymentIntent: string;
   ephemeralKey: string;
   customer: string;
 }
-
+  
 const NewContractMessageForm = ({
   visible,
-  project_title,
+  chat,
+  userId,
   onClose,
   onSubmit,
 }: ContractFormProps) => {
@@ -95,58 +97,65 @@ const NewContractMessageForm = ({
     setForm({ start_date: '', end_date: '', agreed_amount: '', payment_terms: '' });
     onClose();
   };
-
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
+  
       const requiredFields = ['start_date', 'end_date', 'agreed_amount', 'payment_terms'];
-      
-      // Validación de campos
       for (const field of requiredFields) {
-        if (!form[field]?.trim())
-           throw new Error(`El campo "${field}" no puede estar vacío.`);
+        if (!form[field]?.trim()) {
+          throw new Error(`El campo "${field}" no puede estar vacío.`);
+        }
       }
-
-      // Configurar pago
+  
       const amount = parseFloat(form.agreed_amount);
-      const { paymentIntent, ephemeralKey, customer } = await fetchPaymentSheetParams(amount) as unknown as PaymentSheetParams;
-
-      // Inicializar payment sheet
+  
+      const { paymentIntent, ephemeralKey, customer } = await fetchPaymentSheetParams(amount) as PaymentSheetParams;
+  
       const { error } = await initPaymentSheet({
-        merchantDisplayName: "Example, Inc.",
+        merchantDisplayName: "FlickUp",
         customerId: customer,
         customerEphemeralKeySecret: ephemeralKey,
         paymentIntentClientSecret: paymentIntent,
         allowsDelayedPaymentMethods: true,
-        defaultBillingDetails: { name: 'Jane Doe' }
       });
-
+  
       if (error) throw error;
-
-      // Mostrar interfaz de pago
+  
       const { error: paymentError } = await presentPaymentSheet();
       if (paymentError) throw paymentError;
-
-      // Si el pago es exitoso, enviar contrato
+  
       const contractData = {
-        project_title,
+        project_id: chat.id_project,
+        freelancer_id: chat.id_otrapersona,
+        client_id: userId, 
         start_date: new Date(form.start_date).toISOString(),
         end_date: new Date(form.end_date).toISOString(),
         agreed_amount: amount,
         payment_terms: form.payment_terms.trim(),
         status: 'pendiente',
-        submitted_at: new Date().toISOString(),
+        contract_type: 'fijo',
+        terms_conditions: '',
       };
-
+  
+      await post({
+        apiName: 'flickupApi',
+        path: '/contracts',
+        options: {
+          body: contractData
+        }
+      });
+  
       onSubmit(contractData);
       closeModal();
-
+  
     } catch (error: any) {
-      Alert.alert('Error', error.message);
+      Alert.alert('Error al crear el contrato', error.message);
     } finally {
       setSubmitting(false);
     }
   };
+  
 
   if (loading || !publishableKey) return null;
 
@@ -164,7 +173,7 @@ const NewContractMessageForm = ({
           <ScrollView contentContainerStyle={{ padding: 24, paddingTop: 80 }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 4 }}>Contrato</Text>
             <Text style={{ marginBottom: 24, color: '#6b7280', fontStyle: 'italic' }}>
-              {project_title}
+              {chat.project_title}
             </Text>
 
             {[

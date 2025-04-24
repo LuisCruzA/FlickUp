@@ -13,27 +13,37 @@ import ContractCardClient from 'components/Cliente/ContractCardClient';
 import { Ionicons, AntDesign, MaterialIcons } from '@expo/vector-icons';
 import NewContractMessageForm from './NewContractMessageForm';
 import { get, post } from '@aws-amplify/api-rest';
-import type { Mensaje, Chat } from '~/types';
+import type { Mensaje, Chat, Contrato } from '~/types';
+export async function fetchContracts(userId: string, status?: string): Promise<Contrato[]> {
+  const path = status ? `/contracts/${userId}/${status}` : `/contracts/${userId}`;
 
-type Contrato = {
-  project_title: string;
-  start_date: string;
-  end_date: string;
-  agreed_amount: number;
-  payment_terms: string;
-  status: 'pendiente' | 'aceptado';
-  submitted_at: string;
-};
+  const res = await get({
+    apiName: 'flickupApi',
+    path,
+  });
 
-const contratoPendiente: Contrato = {
-  project_title: 'Landing page para negocio local',
-  start_date: '2024-05-01',
-  end_date: '2024-05-10',
-  agreed_amount: 1500,
-  payment_terms: 'Pago 50% al iniciar, 50% al entregar',
-  status: 'pendiente',
-  submitted_at: '2024-04-28T15:00:00Z',
-};
+  const response = await res.response;
+  const raw = await response.body.json();
+
+  if (!Array.isArray(raw)) throw new Error('Respuesta no válida');
+
+  const data: Contrato[] = raw.map((item: any) => ({
+    contract_id: item.contract_id,
+    project_id: item.project_id,
+    freelancer_id: item.freelancer_id,
+    client_id: item.client_id,
+    start_date: item.start_date,
+    end_date: item.end_date,
+    agreed_amount: item.agreed_amount,
+    payment_terms: item.payment_terms,
+    status: item.status,
+    contract_type: item.contract_type,
+    terms_conditions: item.terms_conditions,
+    project_title: item.project_title,
+  }));
+
+  return data;
+}
 
 async function fetchMensajes(
   idUser: string,
@@ -92,6 +102,26 @@ async function enviarMensaje({
   const data = await response.body.json();
   return data;
 }
+
+export async function fetchContratoPendiente(userId: string, projectId: string): Promise<Contrato | null> {
+    const contratos = await fetchContracts(userId, 'pendiente');
+    return contratos.find((c) => c.project_id === projectId) ?? null;
+  }
+
+const mockContract = {
+    "contract_id": '1',
+    "project_id": '101',
+    "freelancer_id": '55',
+    "client_id": '12',
+    "start_date": "2024-05-01T00:00:00Z",
+    "end_date": "2024-05-15T00:00:00Z",
+    "agreed_amount": 2000.0,
+    "payment_terms": "50% upfront, 50% on completion",
+    "status": "pendiente",
+    "contract_type": "fijo",
+    "terms_conditions": "Incluye soporte por 30 días después de la entrega.",
+    "project_title": "Landing Page para Empresa Local"
+  }
 const ChatClient = ({
   chat,
   userId,
@@ -109,28 +139,32 @@ const ChatClient = ({
   4;
 
   useEffect(() => {
-    const cargarMensajes = async () => {
+    const cargarMensajesYContrato = async () => {
       try {
         const mensajesBD = await fetchMensajes(userId, chat.id_otrapersona, chat.id_project);
         setMensajes(mensajesBD);
+
+        const contratoBD = await fetchContratoPendiente(userId, chat.id_project);
+        setContrato(contratoBD);
       } catch (err: any) {
-        console.error('Error al cargar mensajes:', err.message);
+        console.error('Error al cargar datos:', err.message);
       }
     };
 
-    cargarMensajes();
+    cargarMensajesYContrato();
   }, [userId, chat.id_otrapersona, chat.id_project]);
+
   const handleEnviarMensaje = async () => {
     if (!mensajeNuevo.trim()) return;
-  
+
     try {
-      const nuevo = await enviarMensaje({
+      const nuevo = (await enviarMensaje({
         idUser: userId,
         idOtraPersona: chat.id_otrapersona,
         idProject: chat.id_project,
         texto: mensajeNuevo.trim(),
-      })as Mensaje;
-  
+      })) as Mensaje;
+
       // Agregar el mensaje al final del chat localmente
       setMensajes((prev) => [...prev, nuevo]);
       setMensajeNuevo('');
@@ -139,7 +173,8 @@ const ChatClient = ({
       alert('No se pudo enviar el mensaje');
     }
   };
-  
+  const contratoPendiente = contrato?.status === 'pendiente' ? contrato : null;
+
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white pt-12"
@@ -165,19 +200,16 @@ const ChatClient = ({
           </TouchableOpacity>
           <NewContractMessageForm
             visible={modalVisible}
-            project_title={chat.project_title}
+            chat={chat}
+            userId={userId}
             onClose={() => setModalVisible(false)}
             onSubmit={(data) => setContrato(data)}
           />
         </View>
       </View>
-      {contratoPendiente && (
-        <View className="px-4 pt-6">
-          {contratoPendiente && contratoPendiente.status === 'pendiente' && (
-            <ContractCardClient contrato={contratoPendiente} />
-          )}
-        </View>
-      )}
+      <View className="px-4 pt-6">
+  <ContractCardClient contrato={mockContract} />
+</View>
 
       {/* Mensajes */}
       <View className="flex-1 bg-white px-4 pt-3">
@@ -198,13 +230,13 @@ const ChatClient = ({
       {/* Input */}
       <View className="bottom-0 left-0 right-0 flex-row items-center border-t border-gray-200 bg-white px-4 py-3">
         <TextInput
-        value={mensajeNuevo}
-        onChangeText={setMensajeNuevo}
+          value={mensajeNuevo}
+          onChangeText={setMensajeNuevo}
           className="mr-2 flex-1 rounded-full bg-gray-100 px-4 py-2 text-base text-black"
           placeholder="Escribe un mensaje..."
           placeholderTextColor="#9CA3AF"
         />
-        <TouchableOpacity  onPress={handleEnviarMensaje}>
+        <TouchableOpacity onPress={handleEnviarMensaje}>
           <Ionicons name="send" size={24} color="#3B82F6" />
         </TouchableOpacity>
       </View>

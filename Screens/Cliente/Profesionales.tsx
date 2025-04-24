@@ -1,11 +1,12 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 import ProfessionalSelect from 'components/Cliente/professionalSelect';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput } from 'react-native';
 
 import Flashcard from '../../components/Cliente/professionalCards';
 
+import { get } from '@aws-amplify/api-rest';
 interface Profesional {
   id: string;
   nombre: string;
@@ -15,68 +16,68 @@ interface Profesional {
   location: string;
   rating: string;
   categoria: string;
-  image: string; // <-- agrega la URL de la foto
+  image: string;
+  idiomas: string[];
+  verificado: boolean;
 }
 
-export default function Profesionales() {
+function adaptarFreelancer(f: any) {
+  return {
+    id: f.user_id,
+    nombre: (f.full_name.trim() === '' ||  !f.full_name) ? 'Juan Pérez' : f.full_name,
+    descripcion: f.bio,
+    hourly_rate: `$${f.hourly_rate} MXN`,
+    availability_status: f.availability_status,
+    location: f.location,
+    rating: f.rating,
+    categoria: f.title || 'Carpinteria',
+    image: 'https://randomuser.me/api/portraits/men/32.jpg',
+    idiomas: f.languages?.split(',').map((i: string) => i.trim()) || [],
+    verificado: !!f.verified_at,
+  };
+}
 
+async function fecthProfesionales(): Promise<Profesional[]> {
+
+  const restOperation = get({
+    apiName: 'flickupApi',
+    path: `/freelancers`,
+  });
+
+  const response = await restOperation.response;
+  const raw = await response.body.json();
+  if (!Array.isArray(raw)) throw new Error('Respuesta no válida');
+
+  const data = raw.map(adaptarFreelancer);
+
+  return data;
+}
+export default function Profesionales() {
   const [filtro, setFiltro] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProfessional, setSelectedProfessional] = useState<Profesional | null>(null);
+  const [profesionales, setProfesionales] = useState<Profesional[]>([]);
 
-  const profesionales: Profesional[] = [
-    {
-      id: '1',
-      nombre: 'Luis',
-      descripcion: 'Soy especialista en diseño gráfico...',
-      hourly_rate: '$1000 MXN',
-      availability_status: 'Disponible',
-      location: 'CDMX',
-      rating: '5.0',
-      categoria: 'Diseño',
-      image: 'https://randomuser.me/api/portraits/men/32.jpg',
-    },
-    {
-      id: '2',
-      nombre: 'María',
-      descripcion: 'Experta en marketing digital...',
-      hourly_rate: '$1200 MXN',
-      availability_status: 'Disponible',
-      location: 'CDMX',
-      rating: '4.8',
-      categoria: 'Marketing',
-      image: 'https://randomuser.me/api/portraits/women/44.jpg',
-    },
-    {
-      id: '3',
-      nombre: 'Omar',
-      descripcion: 'Desarrollador back-end...',
-      hourly_rate: '$800 MXN',
-      availability_status: 'No disponible',
-      location: 'GDL',
-      rating: '4.2',
-      categoria: 'Programación',
-      image: 'https://i.pravatar.cc/150?img=5',
-    },
-    {
-      id: '4',
-      nombre: 'Sofía',
-      descripcion: 'UI/UX designer con 5 años de experiencia...',
-      hourly_rate: '$1100 MXN',
-      availability_status: 'Disponible',
-      location: 'MTY',
-      rating: '4.9',
-      categoria: 'Diseño',
-      image: 'https://i.pravatar.cc/150?img=8',
-    },
-  ];
+  useEffect(() => {
+    const cargarProfesionales = async () => {
+      try {
+        const profesional = await fecthProfesionales();
+        setProfesionales(profesional);
+      } catch (err: any) {
+        console.error('Error al obtener trabajos:', err.message);
+      }
+    };
 
-  const filtros = ['Todos', 'Diseño', 'Programación', 'Marketing'];
+    cargarProfesionales();
+  }, []);
+
+  const filtros = ['Todos', 'Carpinteria', 'Programación', 'Marketing'];
 
   const profesionalesFiltrados = profesionales.filter((prof) => {
     const coincideCategoria = filtro === 'Todos' || prof.categoria === filtro;
-    const coincideBusqueda = prof.nombre.toLowerCase().includes(busqueda.toLowerCase());
+    const coincideBusqueda = (prof.nombre ?? '').toLowerCase().includes(busqueda.toLowerCase());
+
     return coincideCategoria && coincideBusqueda;
   });
 
@@ -143,10 +144,8 @@ export default function Profesionales() {
 
       {/* Modal de aplicación */}
       {selectedProfessional && (
-        <ProfessionalSelect visible={modalVisible} onClose={() => setModalVisible(false)} />
+        <ProfessionalSelect id_professional = {selectedProfessional.id} visible={modalVisible} onClose={() => setModalVisible(false)} />
       )}
     </View>
   );
 }
-
-

@@ -77,7 +77,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
         onPress={onApply}
         activeOpacity={0.7}
         className="mt-4 rounded-xl bg-blue-500 py-3 items-center">
-        <Text className="text-white font-semibold">Contratar</Text>
+        <Text className="text-white font-semibold">Contactar</Text>
       </TouchableOpacity>
     </View>
   );

@@ -16,7 +16,7 @@ import { getCurrentUser } from 'aws-amplify/auth';
 async function postProject(projectData: any) {
   try {
     const { userId } = await getCurrentUser();
-    
+
     const restOperation = post({
       apiName: 'flickupApi',
       path: '/projects',
@@ -26,9 +26,9 @@ async function postProject(projectData: any) {
           client_id: userId,
           status: 'Activo',
           is_featured: false,
-          expires_at: null
-        }
-      }
+          expires_at: null,
+        },
+      },
     });
 
     const response = await restOperation.response;
@@ -38,13 +38,7 @@ async function postProject(projectData: any) {
   }
 }
 
-const AddJobForm = ({
-  visible,
-  onClose,
-}: {
-  visible: boolean;
-  onClose: () => void;
-}) => {
+const AddJobForm = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
   const [form, setForm] = useState<{ [key: string]: string }>({
     title: '',
     description: '',
@@ -75,26 +69,29 @@ const AddJobForm = ({
   const handleSubmit = async () => {
     try {
       const camposObligatorios = [
-        'title', 'description', 'budget', 'category', 
-        'required_skills', 'estimated_duration'
+        'title',
+        'description',
+        'budget',
+        'category',
+        'required_skills',
+        'estimated_duration',
       ];
-  
+
       for (const campo of camposObligatorios) {
         if (!form[campo]?.trim()) throw new Error(`Campo "${campo}" requerido`);
       }
-  
+
       const jobData = {
         ...form,
         budget: Number(form.budget),
         estimated_duration: Number(form.estimated_duration),
-        required_skills: form.required_skills.split(',').map(s => s.trim()),
+        required_skills: form.required_skills.split(',').map((s) => s.trim()),
         status: 'Activo',
-        posted_date: new Date().toISOString()
+        posted_date: new Date().toISOString(),
       };
-  
+
       await postProject(jobData);
       closeModal();
-      
     } catch (error: any) {
       alert(error.message);
     }
@@ -104,10 +101,9 @@ const AddJobForm = ({
     <Modal visible={visible} animationType="slide">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1 bg-white"
-      >
+        className="flex-1 bg-white">
         <ScrollView className="p-6 pt-20">
-          <Text className="text-2xl font-bold mb-4">Publicar nuevo trabajo</Text>
+          <Text className="mb-4 text-2xl font-bold">Publicar nuevo trabajo</Text>
 
           {/* Campos de formulario */}
           {[
@@ -135,34 +131,29 @@ const AddJobForm = ({
             },
           ].map(({ label, key, multiline, style, keyboardType }) => (
             <View key={key} className="mb-4">
-              <Text className="text-sm font-medium mb-1">{label}</Text>
+              <Text className="mb-1 text-sm font-medium">{label}</Text>
               <TextInput
-                className={`border border-gray-300 rounded-lg px-3 py-2 text-sm ${
-                  style || ''
-                }`}
+                className={`rounded-lg border border-gray-300 px-3 py-2 text-sm ${style || ''}`}
                 value={form[key]}
                 onChangeText={(text) => handleChange(key, text)}
                 multiline={multiline}
                 keyboardType={keyboardType as KeyboardTypeOptions}
-
               />
             </View>
           ))}
 
           {/* Botones */}
-          <View className="flex-row justify-between gap-3 mt-6">
+          <View className="mt-6 flex-row justify-between gap-3">
             <TouchableOpacity
               onPress={closeModal}
-              className="flex-1 rounded-xl bg-gray-300 py-4 items-center"
-            >
-              <Text className="text-gray-800 font-semibold">Cancelar</Text>
+              className="flex-1 items-center rounded-xl bg-gray-300 py-4">
+              <Text className="font-semibold text-gray-800">Cancelar</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={handleSubmit}
-              className="flex-1 rounded-xl bg-blue-500 py-4 items-center"
-            >
-              <Text className="text-white font-semibold">Publicar</Text>
+              className="flex-1 items-center rounded-xl bg-blue-500 py-4">
+              <Text className="font-semibold text-white">Publicar</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

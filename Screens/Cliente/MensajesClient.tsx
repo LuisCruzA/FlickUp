@@ -1,15 +1,44 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { View, TextInput, FlatList } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import ChatCard from 'components/ChatCard';
 import ChatClient from 'components/Cliente/ChatClient';
 import { useNavigation } from '@react-navigation/native';
+import { get } from '@aws-amplify/api-rest';
+import { getCurrentUser } from 'aws-amplify/auth';
+import type { Chat } from '~/types';
+async function fetchChats(userId: string) {
+  const res = await get({
+    apiName: 'flickupApi',
+    path: `/messages/${userId}`,
+  });
 
+  const response = await res.response;
+  const json = (await response.body.json()) as unknown as Chat[];
+
+  if (!Array.isArray(json)) throw new Error('Respuesta no válida');
+  return json as Chat[];
+}
 export default function MensajesClient() {
-  const [chatActivo, setChatActivo] = useState<string | null>(null);
-  const userId = '123';
-
+  const [chatActivo, setChatActivo] = useState<Chat | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [chats, setChats] = useState<Chat[]>([]);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const cargarUsuarioYChats = async () => {
+      try {
+        const { userId } = await getCurrentUser();
+        setUserId(userId);
+        const data = await fetchChats(userId);
+        setChats(data);
+      } catch (err: any) {
+        console.error('Error al obtener chats:', err.message);
+      }
+    };
+
+    cargarUsuarioYChats();
+  }, []);
 
   useLayoutEffect(() => {
     if (chatActivo) {
@@ -22,60 +51,15 @@ export default function MensajesClient() {
   const handleBack = () => {
     setChatActivo(null);
   };
-
-  const chats = [
-    {
-      id: '1',
-      name: 'Bruno Espina',
-      message: 'Tú: Hola soy tu fan',
-      time: '9:40 p.m.',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      project_title: 'Diseño de logotipo para startup',
-    },
-    {
-      id: '2',
-      name: 'nebulanomad',
-      message: 'Tu puta madre',
-      time: '5:40 a.m.',
-      avatar: 'https://i.pravatar.cc/150?img=2',
-      project_title: 'Landing page con animaciones',
-    },
-    {
-      id: '3',
-      name: 'emberecho',
-      message: '👍 Me gustó tu mensaje',
-      time: 'Ayer',
-      avatar: 'https://i.pravatar.cc/150?img=3',
-      project_title: 'Campaña de marketing de verano',
-    },
-    {
-      id: '4',
-      name: 'lunavoyager',
-      message: 'Tú: Te amo, perdón por todo :C',
-      time: 'Ayer',
-      avatar: 'https://i.pravatar.cc/150?img=4',
-      project_title: 'Diseño de ilustraciones personalizadas',
-    },
-    {
-      id: '5',
-      name: 'shadowlynx',
-      message: 'Hey! Whats up?',
-      time: 'Lunes',
-      avatar: 'https://i.pravatar.cc/150?img=5',
-      project_title: 'Optimización SEO para eCommerce',
-    },
-    {
-      id: '6',
-      name: 'fernandx',
-      message: '¿Cuánto me cobras por cambiar el motor?',
-      time: 'Domingo',
-      avatar: 'https://i.pravatar.cc/150?img=6',
-      project_title: 'Mantenimiento de backend con Node.js',
-    },
-  ];
-
+  if (!userId) return null;
   if (chatActivo) {
-    return <ChatClient chatId={chatActivo} userId={userId} onBack={() => handleBack()} />;
+    return (
+      <ChatClient
+        chat={chatActivo}
+        userId={userId}
+        onBack={() => handleBack()}
+      />
+    );
   }
 
   return (
@@ -91,17 +75,17 @@ export default function MensajesClient() {
 
       <FlatList
         data={chats}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id_otrapersona}
         contentContainerStyle={{ paddingBottom: 190 }}
         renderItem={({ item }) => (
           <ChatCard
-            id={item.id}
+            id={item.id_otrapersona}
             name={item.name}
-            message={item.message}
+            message={item.last_message}
             time={item.time}
             avatar={item.avatar}
             project_title={item.project_title}
-            onPress={() => setChatActivo(item.id)}
+            onPress={() => setChatActivo(item)}
           />
         )}
       />

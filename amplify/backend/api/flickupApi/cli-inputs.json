@@ -61,6 +61,13 @@
       "permissions": {
         "setting": "open"
       }
+    },
+    "/predictCreditScore": {
+      "name": "/predictCreditScore",
+      "lambdaFunction": "predictCreditScore",
+      "permissions": {
+        "setting": "open"
+      }
     }
   }
 }

@@ -1,0 +1,13 @@
+{
+  "resourceName": "flickupCreditData",
+  "policyUUID": "b598b666",
+  "bucketName": "flickup-credit-data",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

@@ -14,74 +14,72 @@ import ContractCardPro from './ContractCardPro';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 
 const mensajesMock: {
-  [key: string]: {
-    name: string;
-    avatar: string;
-    project_title: string;
-    mensajes: { id: string; sender_id: string; texto: string }[];
+    [key: string]: {
+      name: string;
+      avatar: string;
+      project_title: string;
+      mensajes: { id: string; sender_id: string; texto: string }[];
+    };
+  } = {
+    '1': {
+      name: 'Carlos Fontes',
+      avatar: 'https://i.pravatar.cc/150?img=10',
+      project_title: 'Instalación de sistema de riego',
+      mensajes: [
+        { id: '1', sender_id: 'client123', texto: 'Hola Carlos, necesito instalar un riego automático.' },
+        { id: '2', sender_id: 'pro456', texto: 'Claro, puedo revisarlo esta semana.' },
+        { id: '3', sender_id: 'client123', texto: 'Perfecto, te veo el jueves' },
+      ],
+    },
+    '2': {
+      name: 'Luisa Herrera',
+      avatar: 'https://i.pravatar.cc/150?img=20',
+      project_title: 'Revisión eléctrica de local comercial',
+      mensajes: [
+        { id: '1', sender_id: 'pro456', texto: '¿Ya cortaron la corriente del área a revisar?' },
+        { id: '2', sender_id: 'client123', texto: 'Sí, lo hicimos hoy temprano.' },
+        { id: '3', sender_id: 'pro456', texto: 'Perfecto, entonces voy en camino.' },
+      ],
+    },
+    '3': {
+      name: 'Esteban Morales',
+      avatar: 'https://i.pravatar.cc/150?img=30',
+      project_title: 'Mantenimiento de aire acondicionado',
+      mensajes: [
+        { id: '1', sender_id: 'client123', texto: 'Hola Esteban, ¿puedes revisar el aire de la sala?' },
+        { id: '2', sender_id: 'pro456', texto: 'Sí, paso después de las 5 pm.' },
+        { id: '3', sender_id: 'client123', texto: 'Te mando la ubicación' },
+      ],
+    },
+    '4': {
+      name: 'Marta Cano',
+      avatar: 'https://i.pravatar.cc/150?img=40',
+      project_title: 'Reparación de grifería y desagüe',
+      mensajes: [
+        { id: '1', sender_id: 'client123', texto: 'El lavamanos sigue goteando...' },
+        { id: '2', sender_id: 'pro456', texto: 'Lo reviso mañana sin falta.' },
+      ],
+    },
+    '5': {
+      name: 'Javier Ávila',
+      avatar: 'https://i.pravatar.cc/150?img=50',
+      project_title: 'Armado de clóset empotrado',
+      mensajes: [
+        { id: '1', sender_id: 'pro456', texto: 'Ya está instalado el clóset.' },
+        { id: '2', sender_id: 'client123', texto: 'Todo quedó perfecto, gracias.' },
+      ],
+    },
+    '6': {
+      name: 'Rosa Domínguez',
+      avatar: 'https://i.pravatar.cc/150?img=60',
+      project_title: 'Pintura exterior de fachada',
+      mensajes: [
+        { id: '1', sender_id: 'client123', texto: '¿Puedes venir mañana temprano?' },
+        { id: '2', sender_id: 'pro456', texto: 'Sí, estaré ahí a las 8.' },
+      ],
+    },
   };
-} = {
-  '1': {
-    name: 'Bruno Espina',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    project_title: 'Diseño de logotipo para startup',
-    mensajes: [
-      { id: '1', sender_id: '123', texto: 'Hola, ¿cómo estás?' },
-      { id: '2', sender_id: '456', texto: 'Bien, ¿y tú?' },
-      { id: '3', sender_id: '123', texto: 'Todo bien, gracias :)' },
-    ],
-  },
-  '2': {
-    name: 'nebulanomad',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-    project_title: 'Landing page en React con animaciones',
-    mensajes: [
-      { id: '1', sender_id: '123', texto: '¿Estás disponible esta semana?' },
-      { id: '2', sender_id: '456', texto: 'Sí, ¿qué necesitas?' },
-    ],
-  },
-  '3': {
-    name: 'emberecho',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    project_title: 'Campaña de marketing de verano',
-    mensajes: [
-      { id: '1', sender_id: '456', texto: '¡Buen trabajo con el proyecto!' },
-      { id: '2', sender_id: '123', texto: 'Gracias, un placer trabajar contigo.' },
-    ],
-  },
-  '4': {
-    name: 'lunavoyager',
-    avatar: 'https://i.pravatar.cc/150?img=4',
-    project_title: 'Ilustraciones personalizadas para redes',
-    mensajes: [
-      { id: '1', sender_id: '123', texto: 'Te amo, perdón por todo :C' },
-      { id: '2', sender_id: '456', texto: 'No pasa nada, todo bien 💛' },
-      { id: '3', sender_id: '123', texto: '¿De verdad?' },
-      { id: '4', sender_id: '456', texto: 'Sí, ya pasó. 😊' },
-    ],
-  },
-  '5': {
-    name: 'shadowlynx',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    project_title: 'Optimización SEO para eCommerce',
-    mensajes: [
-      { id: '1', sender_id: '456', texto: 'Hey! Whats up?' },
-      { id: '2', sender_id: '123', texto: 'Todo bien, ¿y tú?' },
-      { id: '3', sender_id: '456', texto: 'Relajado, solo viendo qué hacer hoy' },
-    ],
-  },
-  '6': {
-    name: 'fernandx',
-    avatar: 'https://i.pravatar.cc/150?img=6',
-    project_title: 'Backend para app de servicios (Node.js + Firebase)',
-    mensajes: [
-      { id: '1', sender_id: '456', texto: '¿Cuánto me cobras por cambiar el motor?' },
-      { id: '2', sender_id: '123', texto: 'Depende del modelo. ¿Qué coche es?' },
-      { id: '3', sender_id: '456', texto: 'Un Jetta 2009' },
-      { id: '4', sender_id: '123', texto: 'Te paso precio en un momento 👌' },
-    ],
-  },
-};
+  
 type Contrato = {
     project_title: string;
     start_date: string;

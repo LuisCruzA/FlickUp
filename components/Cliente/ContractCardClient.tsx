@@ -1,15 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import type { Contrato } from '~/types';
 
-type Contrato = {
-  project_title: string;
-  start_date: string;
-  end_date: string;
-  agreed_amount: number;
-  payment_terms: string;
-  status: 'pendiente' | 'aceptado';
-  submitted_at: string;
-};
 
 const ContractCardClient = ({ contrato }: { contrato: Contrato  }) => {
     return (

@@ -13,16 +13,19 @@ export interface Trabajo {
 }
 
 export interface Contrato {
-  id: string;
-  titulo: string;
-  fechaInicio: string;
-  fechaFin: string;
-  precio: string;
-  descripcionpago: string;
-  estatus: string;
-  tipo: string;
-  descripcion: string;
-}
+    contract_id: string;
+    project_id: string;
+    freelancer_id: string;
+    client_id: string;
+    start_date: string;
+    end_date: string;
+    agreed_amount: number;
+    payment_terms: string;
+    status: 'pendiente' | 'aceptado' | string;
+    contract_type: string;
+    terms_conditions: string;
+    project_title: string; // ← viene del JOIN como alias
+  }
 
 export interface Chat {
   id_project: string;

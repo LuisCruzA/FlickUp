@@ -65,6 +65,14 @@
           ],
           "category": "function",
           "resourceName": "messagesFn"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "predictCreditScore"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -157,6 +165,34 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "generateCreditCsv": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "flickupCreditData"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickuppgLayer"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickupHelperLayer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "jobsFn": {
       "build": true,
       "dependsOn": [
@@ -200,6 +236,27 @@
       "service": "Lambda"
     },
     "messagesFn": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickuppgLayer"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickupHelperLayer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "predictCreditScore": {
       "build": true,
       "dependsOn": [
         {
@@ -397,6 +454,54 @@
         }
       ]
     },
+    "AMPLIFY_function_generateCreditCsv_dbName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "generateCreditCsv"
+        }
+      ]
+    },
+    "AMPLIFY_function_generateCreditCsv_dbSecretArn": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "generateCreditCsv"
+        }
+      ]
+    },
+    "AMPLIFY_function_generateCreditCsv_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "generateCreditCsv"
+        }
+      ]
+    },
+    "AMPLIFY_function_generateCreditCsv_proxyEndpoint": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "generateCreditCsv"
+        }
+      ]
+    },
+    "AMPLIFY_function_generateCreditCsv_s3Bucket": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "generateCreditCsv"
+        }
+      ]
+    },
+    "AMPLIFY_function_generateCreditCsv_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "generateCreditCsv"
+        }
+      ]
+    },
     "AMPLIFY_function_jobsFn_dbName": {
       "usedBy": [
         {
@@ -514,6 +619,22 @@
         {
           "category": "function",
           "resourceName": "messagesFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_predictCreditScore_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "predictCreditScore"
+        }
+      ]
+    },
+    "AMPLIFY_function_predictCreditScore_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "predictCreditScore"
         }
       ]
     },
@@ -636,6 +757,13 @@
           "resourceName": "usersFn"
         }
       ]
+    }
+  },
+  "storage": {
+    "flickupCreditData": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
     }
   }
 }

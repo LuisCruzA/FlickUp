@@ -78,6 +78,18 @@
           "dbName": "flickup",
           "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
           "s3Key": "amplify-builds/messagesFn-595470616b4a4976736c-build.zip"
+        },
+        "generateCreditCsv": {
+          "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+          "s3Key": "amplify-builds/generateCreditCsv-46575759367949656438-build.zip",
+          "proxyEndpoint": "flickup-proxy.proxy-cytmeaaa2wzz.us-east-1.rds.amazonaws.com",
+          "dbSecretArn": "arn:aws:secretsmanager:us-east-1:954976296009:secret:rds!cluster-b2474fb7-27d7-4186-8885-7b15a0406aa3-8DQZTC",
+          "dbName": "flickup",
+          "s3Bucket": "flickup-credit-data"
+        },
+        "predictCreditScore": {
+          "deploymentBucketName": "amplify-flickup-dev-3b549-deployment",
+          "s3Key": "amplify-builds/predictCreditScore-51366f49516662594d39-build.zip"
         }
       },
       "auth": {
@@ -85,6 +97,9 @@
       },
       "api": {
         "flickupApi": {}
+      },
+      "storage": {
+        "flickupCreditData": {}
       }
     }
   }

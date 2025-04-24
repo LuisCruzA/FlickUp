@@ -57,6 +57,14 @@
           ],
           "category": "function",
           "resourceName": "stripeFn"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "messagesFn"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -171,6 +179,27 @@
       "service": "Lambda"
     },
     "me": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickuppgLayer"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "flickupHelperLayer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "messagesFn": {
       "build": true,
       "dependsOn": [
         {
@@ -445,6 +474,46 @@
         {
           "category": "function",
           "resourceName": "me"
+        }
+      ]
+    },
+    "AMPLIFY_function_messagesFn_dbName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "messagesFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_messagesFn_dbSecretArn": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "messagesFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_messagesFn_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "messagesFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_messagesFn_proxyEndpoint": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "messagesFn"
+        }
+      ]
+    },
+    "AMPLIFY_function_messagesFn_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "messagesFn"
         }
       ]
     },

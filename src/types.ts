@@ -11,3 +11,16 @@ export interface Trabajo {
     nivelComplejidad: string;
     destacado: boolean;
   }
+
+  export interface Contrato{
+
+    id: string;
+    titulo: string;
+  fechaInicio: string;
+  fechaFin: string;
+  precio: string;
+ descripcionpago: string;
+  estatus: string;
+  tipo: string;
+  descripcion: string;
+  }

@@ -8,7 +8,17 @@ exports.handler = async (event) => {
 
   if (httpMethod === 'GET' && resource === '/freelancers') {
     const { rows } = await db.query(
-      'SELECT * FROM freelancers ORDER BY rating DESC LIMIT 100'
+      `
+      SELECT
+        f.*,
+        CONCAT(u.first_name, ' ', u.last_name) AS full_name
+      FROM
+        freelancers f
+        JOIN users u ON f.user_id = u.cognito_sub
+      ORDER BY
+        f.rating DESC
+      LIMIT 100
+      `
     );
     return ok(rows);
   }

@@ -54,6 +54,13 @@
           "update"
         ]
       }
+    },
+    "/messages": {
+      "name": "/messages",
+      "lambdaFunction": "messagesFn",
+      "permissions": {
+        "setting": "open"
+      }
     }
   }
 }
